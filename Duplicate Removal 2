@@ -1,0 +1,84 @@
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int x) { val = x; next = null; }
+}
+
+public class Main {
+    public static void insertNode(ListNode[] head, int val) {
+        ListNode newNode = new ListNode(val);
+        if (head[0] == null) {
+            head[0] = newNode;
+            return;
+        }
+        ListNode temp = head[0];
+        while (temp.next != null) {
+            temp = temp.next;
+        }
+        temp.next = newNode;
+    }
+
+    public static void printList(ListNode node) {
+        if (node == null) {
+            System.out.println("null");
+            return;
+        }
+        while (node != null) {
+            System.out.print(node.val + " ");
+            node = node.next;
+        }
+        System.out.println();
+    }
+
+    public static ListNode deleteDuplicates(ListNode head) {
+        // Create a dummy node that points to the head
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        
+        // 'prev' is the last node before the sublist of duplicates
+        ListNode prev = dummy;
+        
+        while (head != null) {
+            // If it's a start of a duplicate sublist
+            if (head.next != null && head.val == head.next.val) {
+                // Move head until the end of the duplicate sublist
+                while (head.next != null && head.val == head.next.val) {
+                    head = head.next;
+                }
+                // Skip all duplicates by linking prev to head's next
+                prev.next = head.next;
+            } else {
+                // No duplicate found for this value, move prev forward
+                prev = prev.next;
+            }
+            // Move to the next element
+            head = head.next;
+        }
+        
+        return dummy.next;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // Safely check if input exists
+        if (!sc.hasNextInt()) {
+            System.out.println("null");
+            return;
+        }
+        
+        int n = sc.nextInt();
+        ListNode[] head = new ListNode[1];
+
+        for (int i = 0; i < n; i++) {
+            if (sc.hasNextInt()) {
+                int temp = sc.nextInt();
+                insertNode(head, temp);
+            }
+        }
+
+        ListNode res = deleteDuplicates(head[0]);
+        printList(res);
+    }
+}
