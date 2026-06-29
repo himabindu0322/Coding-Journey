@@ -1,0 +1,69 @@
+import java.util.*;
+
+public class Main {
+    // Placeholder function where the user will write their logic
+    public static List<String> letterCombinations(String digits) {
+        List<String> result = new ArrayList<>();
+        
+        // Base case: if the input is empty, return an empty list
+        if (digits == null || digits.length() == 0) {
+            return result;
+        }
+        
+        // Define keypad mapping where index matches the digit value
+        String[] mapping = {
+            "",     // 0
+            "",     // 1
+            "abc",  // 2
+            "def",  // 3
+            "ghi",  // 4
+            "jkl",  // 5
+            "mno",  // 6
+            "pqrs", // 7
+            "tuv",  // 8
+            "wxyz"  // 9
+        };
+        
+        // Call helper function to find combinations
+        backtrack(result, digits, mapping, 0, new StringBuilder());
+        
+        return result; 
+    }
+
+    private static void backtrack(List<String> result, String digits, String[] mapping, int index, StringBuilder current) {
+        // If the current combination is complete
+        if (index == digits.length()) {
+            result.add(current.toString());
+            return;
+        }
+        
+        // Get the string mapping for the current digit character
+        String letters = mapping[digits.charAt(index) - '0'];
+        
+        // Iterate through all letters mapped to the current digit
+        for (int i = 0; i < letters.length(); i++) {
+            current.append(letters.charAt(i));              // Choose
+            backtrack(result, digits, mapping, index + 1, current); // Explore next digit
+            current.deleteCharAt(current.length() - 1);     // Backtrack / Unchoose
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        // Using hasNextLine checks safely to prevent NoSuchElementException issues on empty inputs
+        if (scanner.hasNextLine()) {
+            String digits = scanner.nextLine().trim();
+
+            // Call user logic function and get the result
+            List<String> result = letterCombinations(digits);
+
+            // Sort the result as required by the problem statement
+            Collections.sort(result);
+
+            // Print the result in the required format
+            for (String combination : result) {
+                System.out.print(combination + " ");
+            }
+        }
+    }
+}
