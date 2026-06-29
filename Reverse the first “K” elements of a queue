@@ -1,0 +1,30 @@
+import java.util.*;
+import java.io.*;
+import java.util.Queue;
+
+public class Solution {
+    public static void reverse(Queue<Integer> queue, int k) {
+        // Edge cases: If queue is empty, has 1 element, or k is out of bounds/0
+        if (queue == null || queue.isEmpty() || k <= 1 || k > queue.size()) {
+            return;
+        }
+
+        Stack<Integer> stack = new Stack<>();
+
+        // Step 1: Dequeue the first K elements and push them onto the stack
+        for (int i = 0; i < k; i++) {
+            stack.push(queue.poll());
+        }
+
+        // Step 2: Pop from the stack and enqueue back to the queue
+        while (!stack.isEmpty()) {
+            queue.add(stack.pop());
+        }
+
+        // Step 3: Move the remaining (N - K) elements to the back of the queue
+        int remainingElements = queue.size() - k;
+        for (int i = 0; i < remainingElements; i++) {
+            queue.add(queue.poll());
+        }
+    }
+}
