@@ -1,0 +1,92 @@
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+
+    ListNode() {}
+
+    ListNode(int val) {
+        this.val = val;
+    }
+}
+
+public class Main {
+
+    // Function to swap nodes pairwise
+    public static ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+
+        while (prev.next != null && prev.next.next != null) {
+            ListNode first = prev.next;
+            ListNode second = prev.next.next;
+
+            // Structural swapping
+            first.next = second.next;
+            second.next = first;
+            prev.next = second;
+
+            // Move pointer forward
+            prev = first;
+        }
+
+        return dummy.next;
+    }
+
+    // Helper function to create linked list
+    public static ListNode stringToListNode(String input) {
+        if (input.equals("[]") || input.trim().isEmpty()) return null;
+
+        input = input.substring(1, input.length() - 1);
+        input = input.replace(",", " ");
+
+        String[] parts = input.trim().split("\\s+");
+        if (parts.length == 1 && parts[0].isEmpty()) return null;
+
+        ListNode dummy = new ListNode(0);
+        ListNode ptr = dummy;
+
+        for (String part : parts) {
+            ptr.next = new ListNode(Integer.parseInt(part));
+            ptr = ptr.next;
+        }
+
+        return dummy.next;
+    }
+
+    // Fixed helper function to match the exact expected output format with commas
+    public static String listNodeToString(ListNode head) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+
+        while (head != null) {
+            sb.append(head.val);
+
+            if (head.next != null) {
+                sb.append(", "); // Fixed: Changed from " " to ", "
+            }
+
+            head = head.next;
+        }
+
+        sb.append("]");
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextLine()) {
+            String input = sc.nextLine();
+            ListNode head = stringToListNode(input);
+            ListNode result = swapPairs(head);
+            System.out.println(listNodeToString(result));
+        }
+        sc.close();
+    }
+}
