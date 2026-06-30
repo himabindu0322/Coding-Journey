@@ -1,0 +1,41 @@
+import java.util.Scanner;
+
+public class Main {
+    static final long MOD = 1_000_000_007L;
+
+    // Helper function to calculate (base^exp) % MOD in O(log exp) time
+    private static long power(long base, long exp) {
+        long res = 1;
+        base = base % MOD;
+        while (exp > 0) {
+            if ((exp & 1) == 1) {
+                res = (res * base) % MOD;
+            }
+            base = (base * base) % MOD;
+            exp >>= 1;
+        }
+        return res;
+    }
+
+    // Fixed the function signature parameter from int to long to support constraints up to 10^15
+    static long calculateValidPins(long n) {
+        long evens = (n + 1) / 2;
+        long odds = n / 2;
+
+        long evenChoices = power(5, evens);
+        long oddChoices = power(4, odds);
+
+        return (evenChoices * oddChoices) % MOD;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        long n = scanner.nextLong();
+        
+        // Pass the long directly to the logic function
+        long result = calculateValidPins(n);
+        System.out.println(result);
+        
+        scanner.close();
+    }
+}
