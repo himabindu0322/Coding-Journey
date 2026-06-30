@@ -1,0 +1,57 @@
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) { val = x; }
+}
+
+public class Main {
+    public static TreeNode makeTree(int idx, int n, int[] arr) {
+        if (idx >= n || arr[idx] == -1) {
+            return null;
+        }
+        TreeNode root = new TreeNode(arr[idx]);
+        root.left = makeTree(2 * idx + 1, n, arr);
+        root.right = makeTree(2 * idx + 2, n, arr);
+        return root;
+    }
+
+    // Helper method to perform DFS and accumulate binary values
+    private static int dfs(TreeNode node, int currentSum) {
+        if (node == null) {
+            return 0;
+        }
+
+        // Update the binary value for the current path
+        currentSum = (currentSum << 1) | node.val; // Equivalent to: (currentSum * 2) + node.val
+
+        // If it's a leaf node, return the accumulated path value
+        if (node.left == null && node.right == null) {
+            return currentSum;
+        }
+
+        // Otherwise, sum up values from both left and right paths
+        return dfs(node.left, currentSum) + dfs(node.right, currentSum);
+    }
+
+    public static int userLogic(TreeNode root) {
+        // Start DFS traversal with an initial path value of 0
+        return dfs(root, 0);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = scanner.nextInt();
+            }
+            TreeNode root = makeTree(0, n, arr);
+            int result = userLogic(root);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
