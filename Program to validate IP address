@@ -1,0 +1,47 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+
+    public static boolean isValidIPv4(String ipAddress) {
+        // Base edge case check
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            return false;
+        }
+
+        // Split by dot. The second parameter -1 ensures that trailing empty splits are captured
+        String[] parts = ipAddress.split("\\.", -1);
+
+        // A valid IPv4 must have exactly 4 parts (a, b, c, d)
+        if (parts.length != 4) {
+            return false;
+        }
+
+        for (String part : parts) {
+            // Each part must not be empty
+            if (part.isEmpty()) {
+                return false;
+            }
+
+            // Check if all characters in the part are numeric digits
+            for (int i = 0; i < part.length(); i++) {
+                if (!Character.isDigit(part.charAt(i))) {
+                    return false;
+                }
+            }
+
+            // Guard against strings with too many digits that overflow Integer.parseInt
+            if (part.length() > 3) {
+                return false;
+            }
+
+            // Parse and check if the number is within the range [0, 255]
+            int num = Integer.parseInt(part);
+            if (num < 0 || num > 255) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
