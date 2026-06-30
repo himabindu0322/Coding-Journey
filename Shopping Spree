@@ -1,0 +1,48 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {    
+    private static final long MOD = 1_000_000_007L;
+
+    // Helper method to compute (base^exp) % MOD using binary exponentiation
+    private static long power(long base, long exp) {
+        long res = 1;
+        base %= MOD;
+        while (exp > 0) {
+            if ((exp & 1) == 1) {
+                res = (res * base) % MOD;
+            }
+            base = (base * base) % MOD;
+            exp >>= 1;
+        }
+        return res;
+    }
+
+    // Helper method to compute modular inverse using Fermat's Little Theorem
+    private static long modInverse(long n) {
+        return power(n, MOD - 2);
+    }
+
+    public static int shoppingSpree(int n, int k) {
+        // We need to compute: C(n + k, k) - 1
+        long numerator = 1;
+        long denominator = 1;
+
+        // Optimize calculations: C(n + k, k) is equal to C(n + k, n)
+        // Pick the smaller one to minimize iterations
+        int r = Math.min(k, n);
+
+        for (int i = 1; i <= r; i++) {
+            numerator = (numerator * (n + k - i + 1)) % MOD;
+            denominator = (denominator * i) % MOD;
+        }
+
+        // Final result combination value: (numerator / denominator) % MOD
+        long ans = (numerator * modInverse(denominator)) % MOD;
+
+        // Subtract 1 as per formula, handle negative modulo bounds
+        ans = (ans - 1 + MOD) % MOD;
+
+        return (int) ans;
+    }
+}
