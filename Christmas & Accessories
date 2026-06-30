@@ -1,0 +1,57 @@
+import java.util.*;
+
+class Main {
+    public static List<String> find_possible_combinations(int n, int b, int c, int a) {
+        List<String> result = new ArrayList<>();
+        backtrack(n, b, c, a, new StringBuilder(), result);
+        return result;
+    }
+
+    private static void backtrack(int n, int b, int c, int a, StringBuilder current, List<String> result) {
+        // Base Case: If we have picked exactly N accessories, add to the results
+        if (current.length() == n) {
+            result.add(current.toString());
+            return;
+        }
+
+        // Option 1: Try placing 'B' if available
+        if (b > 0) {
+            current.append('B');
+            backtrack(n, b - 1, c, a, current, result);
+            current.deleteCharAt(current.length() - 1); // Backtrack
+        }
+
+        // Option 2: Try placing 'C' if available
+        if (c > 0) {
+            current.append('C');
+            backtrack(n, b, c - 1, a, current, result);
+            current.deleteCharAt(current.length() - 1); // Backtrack
+        }
+
+        // Option 3: Try placing 'A' if available
+        if (a > 0) {
+            current.append('A');
+            backtrack(n, b, c, a - 1, current, result);
+            current.deleteCharAt(current.length() - 1); // Backtrack
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            int n = sc.nextInt();  // First input is the integer n
+            int b = sc.nextInt();  // Second input is the integer B
+            int c = sc.nextInt();  // Third input is the integer C
+            int a = sc.nextInt();  // Fourth input is the integer A
+            
+            // Call user logic function and get the result
+            List<String> result = find_possible_combinations(n, b, c, a);
+            
+            // Print each combination in a new line
+            for (String combination : result) {
+                System.out.println(combination);
+            }
+        }
+        sc.close();
+    }
+}
