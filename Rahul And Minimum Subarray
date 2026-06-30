@@ -1,0 +1,24 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static int minSubArrayLen(int arr[], int target, int n) {
+        int left = 0;
+        long currentSum = 0; // Using long to avoid potential integer overflow with large elements
+        int minLength = Integer.MAX_VALUE;
+
+        for (int right = 0; right < n; right++) {
+            currentSum += arr[right];
+
+            // Shrink the window from the left as long as the sum is strictly greater than target
+            while (currentSum > target) {
+                minLength = Math.min(minLength, right - left + 1);
+                currentSum -= arr[left];
+                left++;
+            }
+        }
+
+        // If minLength was updated, return it; otherwise, return 0
+        return (minLength == Integer.MAX_VALUE) ? 0 : minLength;
+    }
+}
