@@ -1,0 +1,72 @@
+import java.util.*;
+
+public class Main {
+    static void specialmsg(String s, List<Map.Entry<String, String>> vocab) {
+        // Step 1: Convert the list of entries into a HashMap for fast O(1) retrieval
+        Map<String, String> map = new HashMap<>();
+        for (Map.Entry<String, String> entry : vocab) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+        int n = s.length();
+
+        // Step 2: Parse the string sequentially
+        while (i < n) {
+            char ch = s.charAt(i);
+
+            if (ch == '(') {
+                // Found the start of an acronym block
+                StringBuilder keyBuilder = new StringBuilder();
+                i++; // Move past '('
+                
+                // Collect characters until the closing bracket ')'
+                while (i < n && s.charAt(i) != ')') {
+                    keyBuilder.append(s.charAt(i));
+                    i++;
+                }
+                i++; // Move past ')'
+
+                String key = keyBuilder.toString();
+                // Replace with the map's value or "?" if it doesn't exist
+                if (map.containsKey(key)) {
+                    result.append(map.get(key));
+                } else {
+                    result.append("?");
+                }
+            } else {
+                // Regular character outside brackets
+                result.append(ch);
+                i++;
+            }
+        }
+
+        // Step 3: Print the result without any trailing white spaces
+        System.out.print(result.toString().trim());
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextLine()) return;
+        String s = sc.nextLine();
+        if (!sc.hasNextLine()) return;
+        int n = Integer.parseInt(sc.nextLine().trim());
+        
+        List<Map.Entry<String, String>> vocab = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                if (!line.isEmpty()) {
+                    String[] kv = line.split(" ");
+                    // Handle edge cases where value might be missing safely
+                    String key = kv[0];
+                    String val = kv.length > 1 ? kv[1] : "";
+                    vocab.add(new AbstractMap.SimpleEntry<>(key, val));
+                }
+            }
+        }
+        
+        specialmsg(s, vocab);
+    }
+}
