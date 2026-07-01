@@ -1,0 +1,82 @@
+import java.util.*;
+
+public class Main {
+    public static void rearrange_blocks_to_form_name(String S, String P) {
+        int n = S.length();
+        int m = P.length();
+
+        // If the name is longer than the block string, no matches are possible
+        if (m > n) {
+            System.out.println(0);
+            System.out.println("none");
+            return;
+        }
+
+        // Frequency arrays for lowercase English alphabets
+        int[] pCount = new int[26];
+        int[] sCount = new int[26];
+
+        // Populate frequencies for string P and the first window of string S
+        for (int i = 0; i < m; i++) {
+            pCount[P.charAt(i) - 'a']++;
+            sCount[S.charAt(i) - 'a']++;
+        }
+
+        List<Integer> resultIndices = new ArrayList<>();
+
+        // Check the very first window
+        if (matches(pCount, sCount)) {
+            resultIndices.add(1); // 1-based indexing
+        }
+
+        // Slide the window across the rest of string S
+        for (int i = m; i < n; i++) {
+            // Add the new character entering the window
+            sCount[S.charAt(i) - 'a']++;
+            // Remove the character leaving the window
+            sCount[S.charAt(i - m) - 'a']--;
+
+            // Check if the current window matches
+            if (matches(pCount, sCount)) {
+                resultIndices.add(i - m + 2); // 1-based index calculation
+            }
+        }
+
+        // Output formatting
+        int totalMatches = resultIndices.size();
+        System.out.println(totalMatches);
+
+        if (totalMatches == 0) {
+            System.out.println("none");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < totalMatches; i++) {
+                sb.append(resultIndices.get(i));
+                if (i < totalMatches - 1) {
+                    sb.append(" ");
+                }
+            }
+            System.out.println(sb.toString());
+        }
+    }
+
+    // Helper method to compare two frequency arrays
+    private static boolean matches(int[] arr1, int[] arr2) {
+        for (int i = 0; i < 26; i++) {
+            if (arr1[i] != arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextLine()) return;
+        String S = scanner.nextLine().trim();
+        if (!scanner.hasNextLine()) return;
+        String P = scanner.nextLine().trim();
+        
+        rearrange_blocks_to_form_name(S, P);
+    }
+}
