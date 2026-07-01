@@ -1,0 +1,65 @@
+/****************************************************************
+
+ Following is the class structure of the Node class:
+
+ class Node {
+     public int data;
+     public Node next;
+     public Node prev;
+
+     Node()
+     {
+         this.data = 0;
+         this.next = null;
+         this.prev = null;
+     }
+
+     Node(int data)
+     {
+         this.data = data;
+         this.next = null;
+         this.prev = null;
+     }
+
+     Node(int data, Node next)
+     {
+         this.data = data;
+         this.next = next;
+         this.prev = next;
+     }
+ };
+
+ *****************************************************************/
+
+public class Solution
+{
+    public static Node reverseDLL(Node head)
+    {
+        // Edge case: If the list is empty or has only one element
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        Node current = head;
+        Node lastVisited = null;
+
+        // Traverse the list and swap next and prev pointers for each node
+        while (current != null) {
+            // Store the original prev node
+            lastVisited = current.prev;
+            
+            // Swap pointers
+            current.prev = current.next;
+            current.next = lastVisited;
+
+            // Move to the next node in the original sequence.
+            // Since we just changed current.prev to point to original current.next, 
+            // current.prev is the gateway to the remaining unreversed list.
+            current = current.prev;
+        }
+
+        // After the loop, 'lastVisited' points to the old second node,
+        // and its original 'prev' (now 'current.prev' of the old tail) is the old tail.
+        return lastVisited.prev;
+    }
+}
