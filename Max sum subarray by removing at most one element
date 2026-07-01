@@ -1,0 +1,30 @@
+class Solution {
+    public int maxSumSubarray(int[] arr) {
+        int n = arr.length;
+        
+        // Edge case: if there's only one element, we cannot skip it 
+        // because the remaining subarray must be non-empty.
+        if (n == 1) {
+            return arr[0];
+        }
+
+        // Initialize tracking variables with the first element
+        int maxEndHere = arr[0];
+        int maxSkippedHere = arr[0];
+        int overallMax = arr[0];
+
+        for (int i = 1; i < n; i++) {
+            // Option 1: Skip the current element arr[i] -> takes previous maxEndHere
+            // Option 2: Keep current element arr[i] but use a past skip -> maxSkippedHere + arr[i]
+            maxSkippedHere = Math.max(maxEndHere, maxSkippedHere + arr[i]);
+
+            // Standard Kadane's algorithm for no skips
+            maxEndHere = Math.max(arr[i], maxEndHere + arr[i]);
+
+            // Update the global maximum with both possibilities
+            overallMax = Math.max(overallMax, Math.max(maxEndHere, maxSkippedHere));
+        }
+
+        return overallMax;
+    }
+}
