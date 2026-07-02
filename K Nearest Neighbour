@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Main {
+    // Helper class to encapsulate coordinates, distance and original insertion index
+    static class PointInfo {
+        int x, y;
+        long distanceSq;
+        int index;
+
+        PointInfo(int x, int y, int index) {
+            this.x = x;
+            this.y = y;
+            this.index = index;
+            // Calculate squared distance using long to avoid integer overflow
+            this.distanceSq = (long) x * x + (long) y * y;
+        }
+    }
+
+    public static void findKNearestPoints(List<int[]> points, int k, List<int[]> result) {
+        List<PointInfo> pointList = new ArrayList<>();
+        
+        // Wrap input array with original tracking indices
+        for (int i = 0; i < points.size(); i++) {
+            int[] pt = points.get(i);
+            pointList.add(new PointInfo(pt[0], pt[1], i));
+        }
+        
+        // Sort based on distance, and fallback to input index if distances match
+        Collections.sort(pointList, new Comparator<PointInfo>() {
+            @Override
+            public int compare(PointInfo p1, PointInfo p2) {
+                if (p1.distanceSq != p2.distanceSq) {
+                    return Long.compare(p1.distanceSq, p2.distanceSq);
+                }
+                return Integer.compare(p1.index, p2.index);
+            }
+        });
+        
+        // Populate the K nearest elements into the resulting collection
+        for (int i = 0; i < k; i++) {
+            PointInfo target = pointList.get(i);
+            result.add(new int[]{target.x, target.y});
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        List<int[]> points = new ArrayList<>();
+        for (int i = 0; i < n; ++i) {
+            int x = sc.nextInt();
+            int y = sc.nextInt();
+            points.add(new int[] { x, y });
+        }
+        List<int[]> result = new ArrayList<>();
+        findKNearestPoints(points, k, result);
+        for (int[] point : result) {
+            System.out.println(point[0] + " " + point[1]);
+        }
+        sc.close();
+    }
+}
