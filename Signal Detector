@@ -1,0 +1,24 @@
+public class Solution {
+    public static String isSparse(int n, int d, int[] signal) {
+        // Keeps track of the index of the previously encountered '1'
+        int lastSeenIndex = -1;
+
+        for (int i = 0; i < n; i++) {
+            // Check if the current element is a '1'
+            if (signal[i] == 1) {
+                // If it's not the first '1' we've found, validate the distance
+                if (lastSeenIndex != -1) {
+                    int distance = i - lastSeenIndex;
+                    // Condition: Distance must be STRICTLY GREATER than d
+                    if (distance <= d) {
+                        return "No";
+                    }
+                }
+                // Update the tracker to the current index
+                lastSeenIndex = i;
+            }
+        }
+
+        return "Yes";
+    }
+}
