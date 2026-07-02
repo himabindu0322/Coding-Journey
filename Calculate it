@@ -1,0 +1,38 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int countExpressibleNumbers(int X, int Y) {
+        int count = 0;
+        
+        // Loop through all possible powers of 2 where 2^A <= Y
+        long pow2 = 1; // Use long to prevent integer overflow during multiplications
+        while (pow2 <= Y) {
+            
+            // Loop through all possible powers of 3 where 2^A * 3^B <= Y
+            long val = pow2;
+            while (val <= Y) {
+                // If the generated value is within the inclusive range [X, Y], count it
+                if (val >= X) {
+                    count++;
+                }
+                
+                val *= 3;
+            }
+            
+            pow2 *= 2;
+        }
+        
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        int X = scanner.nextInt();
+        int Y = scanner.nextInt();
+        
+        // Call user logic function and print the output
+        int result = countExpressibleNumbers(X, Y);
+        System.out.println(result);
+    }
+}
