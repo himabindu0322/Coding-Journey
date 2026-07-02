@@ -1,0 +1,26 @@
+import java.util.List;
+import java.util.Collections;
+
+public class Solution {
+    public static int maxDelay(int n, List<Integer> timestamps) {
+        // Edge case: if there are fewer than 2 messages, there is no delay between consecutive ones.
+        if (n < 2 || timestamps == null || timestamps.size() < 2) {
+            return 0;
+        }
+
+        // Step 1: Sort the timestamps to bring them into chronological order
+        Collections.sort(timestamps);
+
+        int maxDelay = 0;
+
+        // Step 2: Find the maximum gap between consecutive messages
+        for (int i = 1; i < n; i++) {
+            int currentDelay = timestamps.get(i) - timestamps.get(i - 1);
+            if (currentDelay > maxDelay) {
+                maxDelay = currentDelay;
+            }
+        }
+
+        return maxDelay;
+    }
+}
