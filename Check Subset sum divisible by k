@@ -1,0 +1,43 @@
+class Solution {
+    public boolean divisibleByK(int[] arr, int k) {
+        // dp[i] will be true if a subset sum with remainder 'i' modulo k is possible
+        boolean[] dp = new boolean[k];
+        
+        for (int num : arr) {
+            int rem = num % k;
+            
+            // If the element itself is divisible by k, we found our non-empty subset
+            if (rem == 0) {
+                return true;
+            }
+            
+            // Temporary array to store remainders reachable by including the current 'num'
+            boolean[] nextDp = new boolean[k];
+            
+            for (int r = 0; r < k; r++) {
+                if (dp[r]) {
+                    int newRem = (r + rem) % k;
+                    
+                    // If we can achieve a remainder of 0, a valid subset exists
+                    if (newRem == 0) {
+                        return true;
+                    }
+                    nextDp[newRem] = true;
+                }
+            }
+            
+            // Mark the remainder of the single element itself as reachable
+            nextDp[rem] = true;
+            
+            // Merge the newly found remainders into our main dp array
+            for (int r = 0; r < k; r++) {
+                if (nextDp[r]) {
+                    dp[r] = true;
+                }
+            }
+        }
+        
+        // If the loop finishes without hitting a 0 remainder, no such subset exists
+        return false;
+    }
+}
