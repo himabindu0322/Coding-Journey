@@ -1,0 +1,44 @@
+public class Solution {
+    public static int minEatingSpeed(int[] piles, long h) {
+        int low = 1;
+        int high = 0;
+
+        // Find the maximum pile size to define our binary search upper bound
+        for (int pile : piles) {
+            high = Math.max(high, pile);
+        }
+
+        int result = high;
+
+        // Perform Binary Search on the possible values of eating speed 'k'
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (canEatAll(piles, h, mid)) {
+                result = mid;       // Record the valid speed
+                high = mid - 1;     // Try to find a smaller valid speed
+            } else {
+                low = mid + 1;      // Speed is too slow, increase it
+            }
+        }
+
+        return result;
+    }
+
+    // Helper method to check if a speed 'k' allows finishing within 'h' hours
+    private static boolean canEatAll(int[] piles, long h, int k) {
+        long totalHours = 0;
+
+        for (int pile : piles) {
+            // Equivalent to Math.ceil((double) pile / k) using integer math
+            totalHours += (pile + k - 1) / k;
+
+            // Early exit optimization if totalHours already exceeds maximum allowed hours
+            if (totalHours > h) {
+                return false;
+            }
+        }
+
+        return totalHours <= h;
+    }
+}
