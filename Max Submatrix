@@ -1,0 +1,37 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    public static int maxSumSubmatrix(int mat[][], int n, int m) {
+        int maxSum = Integer.MIN_VALUE;
+
+        // Iterate over all possible top row boundaries
+        for (int top = 0; top < n; top++) {
+            // Array to store column sums for the current row range [top, bottom]
+            int[] colSums = new int[m];
+
+            // Iterate over all possible bottom row boundaries
+            for (int bottom = top; bottom < n; bottom++) {
+                
+                // Add the current row's elements to the accumulated column sums
+                for (int j = 0; j < m; j++) {
+                    colSums[j] += mat[bottom][j];
+                }
+
+                // Apply Kadane's Algorithm on the 1D colSums array
+                int currentMax = colSums[0];
+                int globalMax1D = colSums[0];
+
+                for (int j = 1; j < m; j++) {
+                    currentMax = Math.max(colSums[j], currentMax + colSums[j]);
+                    globalMax1D = Math.max(globalMax1D, currentMax);
+                }
+
+                // Update the maximum submatrix sum found so far
+                maxSum = Math.max(maxSum, globalMax1D);
+            }
+        }
+
+        return maxSum;
+    }
+}
