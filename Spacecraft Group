@@ -1,0 +1,61 @@
+import java.util.*;
+
+public class Main {
+    // Helper class to group position and time together
+    static class Spaceship {
+        int pos;
+        double time;
+
+        Spaceship(int pos, double time) {
+            this.pos = pos;
+            this.time = time;
+        }
+    }
+
+    public static int spaceshipFleets(int k, int[] pos, int[] speed) {
+        int n = pos.length;
+        if (n == 0) return 0;
+
+        Spaceship[] ships = new Spaceship[n];
+        for (int i = 0; i < n; i++) {
+            // Calculate time using double division for high precision
+            double timeToTarget = (double) (k - pos[i]) / speed[i];
+            ships[i] = new Spaceship(pos[i], timeToTarget);
+        }
+
+        // Sort spaceships by position in descending order (closest to target first)
+        Arrays.sort(ships, (a, b) -> Integer.compare(b.pos, a.pos));
+
+        int fleets = 0;
+        double currentMaxTime = 0.0;
+
+        // Traverse from closest to target to furthest away
+        for (int i = 0; i < n; i++) {
+            // If the current spaceship takes more time than the fleet in front of it,
+            // it starts a new fleet.
+            if (ships[i].time > currentMaxTime) {
+                fleets++;
+                currentMaxTime = ships[i].time;
+            }
+        }
+
+        return fleets;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        int n = scanner.nextInt();
+        int k = scanner.nextInt();
+        int[] pos = new int[n];
+        int[] speed = new int[n];
+        for (int i = 0; i < n; i++) {
+            pos[i] = scanner.nextInt();
+        }
+        for (int i = 0; i < n; i++) {
+            speed[i] = scanner.nextInt();
+        }
+        int result = spaceshipFleets(k, pos, speed);
+        System.out.println(result);
+    }
+}
