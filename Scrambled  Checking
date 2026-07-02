@@ -1,0 +1,71 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class Solution {
+    // Using a class-level map that gets refreshed properly
+    private static Map<String, Boolean> memo;
+
+    public static boolean isScramble(String s1, String s2) {
+        // Re-initialize the map for every fresh test case call
+        memo = new HashMap<>();
+        return checkScramble(s1, s2);
+    }
+
+    private static boolean checkScramble(String s1, String s2) {
+        // 1. Base Case: If strings match exactly
+        if (s1.equals(s2)) {
+            return true;
+        }
+
+        // 2. Base Case: If lengths are different, they cannot be scrambled variants
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+
+        // 3. Lookup the state in our memoization map
+        String key = s1 + "_" + s2;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+
+        // 4. Anagram Pruning: Fast-check if they have the exact same character counts
+        int[] freq = new int[26];
+        for (int i = 0; i < s1.length(); i++) {
+            freq[s1.charAt(i) - 'a']++;
+            freq[s2.charAt(i) - 'a']--;
+        }
+        for (int count : freq) {
+            if (count != 0) {
+                memo.put(key, false);
+                return false;
+            }
+        }
+
+        int n = s1.length();
+
+        // 5. Try splitting the string at every valid split index 'i'
+        for (int i = 1; i < n; i++) {
+            // Scenario A: Left matches Left AND Right matches Right (No structural swap)
+            boolean noSwap = checkScramble(s1.substring(0, i), s2.substring(0, i)) 
+                          && checkScramble(s1.substring(i), s2.substring(i));
+
+            if (noSwap) {
+                memo.put(key, true);
+                return true;
+            }
+
+            // Scenario B: Left matches Right AND Right matches Left (Structural swap occurred)
+            boolean swap = checkScramble(s1.substring(0, i), s2.substring(n - i)) 
+                        && checkScramble(s1.substring(i), s2.substring(0, n - i));
+
+            if (swap) {
+                memo.put(key, true);
+                return true;
+            }
+        }
+
+        // If no split strategy works out, it's not a scramble
+        memo.put(key, false);
+        return false;
+    }
+}
