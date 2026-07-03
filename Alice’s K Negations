@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        
+        long[] arr = new long[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextLong();
+        }
+        
+        // 1. Sort the array to process the most negative values first
+        Arrays.sort(arr);
+        
+        // 2. Flip negative numbers as long as K > 0
+        for (int i = 0; i < n; i++) {
+            if (arr[i] < 0 && k > 0) {
+                arr[i] = -arr[i];
+                k--;
+            }
+        }
+        
+        // 3. If K is still greater than 0 and is odd, we must flip the smallest absolute value
+        if (k % 2 != 0) {
+            Arrays.sort(arr); // Re-sort to find the current smallest positive/zero element
+            arr[0] = -arr[0];
+        }
+        
+        // 4. Compute the maximum total sum
+        long totalSum = 0;
+        for (long num : arr) {
+            totalSum += num;
+        }
+        
+        System.out.println(totalSum);
+    }
+}
