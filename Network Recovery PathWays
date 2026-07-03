@@ -1,0 +1,99 @@
+import java.util.*;
+
+class Solution {
+    public int findMaxPathScore(int[][] edges, boolean[] online, long k) {
+        int n = online.length;
+        
+        // 1. Collect all unique costs to define the binary search boundaries
+        // Using a sorted array of unique edge costs optimizes the search space
+        int maxCost = -1;
+        for (int[] edge : edges) {
+            if (edge[2] > maxCost) {
+                maxCost = edge[2];
+            }
+        }
+        
+        // If there are no edges or maxCost is 0, check if 0 to n-1 is reachable initially
+        if (maxCost == -1) return -1;
+
+        // 2. Compute the Topological Sort of the DAG
+        // Since it's a DAG, topological order remains the same regardless of edge filtering
+        int[] inDegree = new int[n];
+        List<int[]>[] fullAdj = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            fullAdj[i] = new ArrayList<>();
+        }
+        
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            int cost = edge[2];
+            fullAdj[u].add(new int[]{v, cost});
+            inDegree[v]++;
+        }
+        
+        List<Integer> topoOrder = new ArrayList<>();
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+        
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            topoOrder.add(u);
+            for (int[] next : fullAdj[u]) {
+                int v = next[0];
+                inDegree[v]--;
+                if (inDegree[v] == 0) {
+                    queue.offer(v);
+                }
+            }
+        }
+
+        // 3. Binary Search for the maximum possible minimum edge cost
+        int low = 0, high = maxCost;
+        int ans = -1;
+        
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            
+            if (isValid(mid, n, topoOrder, fullAdj, online, k)) {
+                ans = mid;       // 'mid' is achievable, look for something larger
+                low = mid + 1;
+            } else {
+                high = mid - 1;  // 'mid' is impossible, look for something smaller
+            }
+        }
+        
+        return ans;
+    }
+    
+    // Helper function to find the shortest path in a DAG given a threshold 'minCost'
+    private boolean isValid(int minCost, int n, List<Integer> topoOrder, List<int[]>[] adj, boolean[] online, long k) {
+        long[] dist = new long[n];
+        Arrays.fill(dist, Long.MAX_VALUE);
+        dist[0] = 0;
+        
+        // Process nodes in topological order for proper DAG DP
+        for (int u : topoOrder) {
+            if (dist[u] == Long.MAX_VALUE) continue;
+            if (!online[u]) continue; // Cannot pass through offline nodes
+            
+            for (int[] edge : adj[u]) {
+                int v = edge[0];
+                int cost = edge[1];
+                
+                // Only traverse edges that satisfy our binary search constraint
+                if (cost >= minCost && online[v]) {
+                    if (dist[u] + cost < dist[v]) {
+                        dist[v] = dist[u] + cost;
+                    }
+                }
+            }
+        }
+        
+        return dist[n - 1] <= k;
+    }
+}
