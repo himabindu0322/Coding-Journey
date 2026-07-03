@@ -1,0 +1,34 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    public static String maximumDifference(int n, int[] arr) {
+        // Handle edge case where array has fewer than 2 elements
+        if (n < 2) {
+            return "EVEN"; // Difference of an element with itself or nothing is 0 (EVEN)
+        }
+
+        int maxVal = Integer.MIN_VALUE;
+        int minVal = Integer.MAX_VALUE;
+
+        // Find the maximum and minimum elements in a single pass
+        for (int i = 0; i < n; i++) {
+            if (arr[i] > maxVal) {
+                maxVal = arr[i];
+            }
+            if (arr[i] < minVal) {
+                minVal = arr[i];
+            }
+        }
+
+        // Calculate maximum difference using long to safely avoid any overflow
+        long maxDiff = (long) maxVal - minVal;
+
+        // Check if the difference is even or odd
+        if (maxDiff % 2 == 0) {
+            return "EVEN";
+        } else {
+            return "ODD";
+        }
+    }
+}
