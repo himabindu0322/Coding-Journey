@@ -1,0 +1,102 @@
+import java.util.*;
+
+class Node {
+    int data;
+    Node next;
+    Node(int data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+class LinkedList {
+    Node head;
+    Node tail;
+    LinkedList() {
+        this.head = null;
+        this.tail = null;
+    }
+
+    void print() {
+        Node temp = head;
+        while (temp != null) {
+            System.out.print(temp.data + " ");
+            temp = temp.next;
+        }
+    }
+
+    void push(int data) {
+        if (head == null) {
+            Node temp = new Node(data);
+            head = temp;
+            tail = temp;
+        } else {
+            Node temp = new Node(data);
+            tail.next = temp;
+            tail = temp;
+        }
+    }
+}
+
+public class Main {
+    public static void reverseLinkedListUpToX(LinkedList ll, int x) {
+        if (ll.head == null || ll.head.next == null) {
+            return; // Empty list or list with 1 element requires no changes
+        }
+
+        // 1. Locate the boundary right after the leftmost occurrence of x
+        Node current = ll.head;
+        Node nextOfX = null;
+        boolean foundX = false;
+
+        while (current != null) {
+            if (current.data == x) {
+                nextOfX = current.next;
+                foundX = true;
+                break; // Leftmost occurrence found, stop searching
+            }
+            current = current.next;
+        }
+
+        // If x wasn't found anywhere in the list, reverse the entire list
+        if (!foundX) {
+            nextOfX = null;
+        }
+
+        // 2. Perform the partial reversal up until 'nextOfX'
+        Node prev = null;
+        Node curr = ll.head;
+        Node oldHead = ll.head; // Remember original head to link with the unreversed part
+
+        while (curr != nextOfX) {
+            Node nextNode = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextNode;
+        }
+
+        // 3. Re-link the reversed segment with the remaining unreversed list
+        ll.head = prev;
+        oldHead.next = nextOfX;
+        
+        // Update tail reference if we reversed the entire list
+        if (nextOfX == null) {
+            ll.tail = oldHead;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        LinkedList ll = new LinkedList();
+        int n = sc.nextInt();
+        for (int i = 0; i < n; i++) {
+            int t = sc.nextInt();
+            ll.push(t);
+        }
+        int x = sc.nextInt();
+        reverseLinkedListUpToX(ll, x);
+        ll.print();
+    }
+}
