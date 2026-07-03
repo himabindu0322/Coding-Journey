@@ -1,0 +1,61 @@
+import java.util.*;
+
+class Node {
+    int val;
+    Node next;
+    Node(int x) { val = x; next = null; }
+}
+
+public class Main {
+    public static int minChanges(Node head, int n) {
+        // 1. Move all elements from the Linked List to an array
+        int[] original = new int[n];
+        Node temp = head;
+        int index = 0;
+        
+        while (temp != null && index < n) {
+            original[index++] = temp.val;
+            temp = temp.next;
+        }
+        
+        // 2. Create a duplicate array and sort it to know the correct position
+        int[] sorted = original.clone();
+        Arrays.sort(sorted);
+        
+        // 3. Count how many indices differ from the correct position
+        int changes = 0;
+        for (int i = 0; i < n; i++) {
+            if (original[i] != sorted[i]) {
+                changes++;
+            }
+        }
+        
+        return changes;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        int n = sc.nextInt();
+        if (n <= 0) {
+            System.out.println(0);
+            return;
+        }
+        
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = sc.nextInt();
+        }
+        
+        Node head = new Node(values[0]);
+        Node temp = head;
+        for (int i = 1; i < values.length; i++) {
+            temp.next = new Node(values[i]);
+            temp = temp.next;
+        }
+        
+        int result = minChanges(head, n);
+        System.out.println(result);
+    }
+}
