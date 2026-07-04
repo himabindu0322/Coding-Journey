@@ -1,0 +1,34 @@
+class Solution {
+    public int countSubstring(String s) {
+        int n = s.length();
+        
+        // The minimum possible prefix sum is -n, and the maximum is n.
+        int offset = n;
+        int[] freq = new int[2 * n + 1];
+        
+        // Base case: before processing any character
+        freq[offset] = 1;
+        
+        long count = 0;
+        int currentSum = 0;
+        long runningLessThanCount = 0; 
+        
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            
+            if (ch == '1') {
+                runningLessThanCount += freq[currentSum + offset];
+                currentSum++;
+            } else {
+                currentSum--;
+                runningLessThanCount -= freq[currentSum + offset];
+            }
+            
+            count += runningLessThanCount;
+            freq[currentSum + offset]++;
+        }
+        
+        // Explicitly cast long to int to satisfy the template requirement
+        return (int) count;
+    }
+}
