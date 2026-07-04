@@ -1,0 +1,67 @@
+import java.util.Stack;
+
+public class Solution {
+    static class SpecialStack {
+        // Use Long to prevent potential integer overflow during encoding math
+        private Stack<Long> stack;
+        private long minEle;
+
+        public SpecialStack() {
+            stack = new Stack<>();
+        }
+
+        void push(int data) {
+            long x = (long) data;
+            
+            if (stack.isEmpty()) {
+                minEle = x;
+                stack.push(x);
+            } else {
+                if (x >= minEle) {
+                    stack.push(x);
+                } else {
+                    // x is the new minimum, push the encoded flag value
+                    long encodedValue = 2 * x - minEle;
+                    stack.push(encodedValue);
+                    minEle = x;
+                }
+            }
+        }
+
+        void pop() {
+            if (stack.isEmpty()) {
+                return;
+            }
+
+            long val = stack.pop();
+
+            // If the popped value is less than the current minimum, it's a flag
+            if (val < minEle) {
+                // Restore the previous minimum element
+                minEle = 2 * minEle - val;
+            }
+        }
+
+        int top() {
+            if (stack.isEmpty()) {
+                return -1;
+            }
+
+            long val = stack.peek();
+
+            // If val < minEle, the actual top element is stored in the minEle variable
+            if (val < minEle) {
+                return (int) minEle;
+            } else {
+                return (int) val;
+            }
+        }
+
+        int getMin() {
+            if (stack.isEmpty()) {
+                return -1;
+            }
+            return (int) minEle;
+        }
+    }
+}
