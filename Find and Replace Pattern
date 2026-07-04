@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        
+        int n = scanner.nextInt();
+        List<String> words = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            words.add(scanner.next());
+        }
+        String pattern = scanner.next();
+        scanner.close();
+        
+        // Call user logic function
+        ResultContainer result = findAndReplacePattern(words, pattern);
+        
+        // Print the results
+        System.out.println(result.matchedCount);
+        if (result.matchedCount > 0) {
+            System.out.println(String.join(" ", result.matchedWords));
+        }
+    }
+    
+    // A clean wrapper class to get rid of raw Map casting warnings
+    static class ResultContainer {
+        int matchedCount;
+        List<String> matchedWords;
+        
+        ResultContainer(int matchedCount, List<String> matchedWords) {
+            this.matchedCount = matchedCount;
+            this.matchedWords = matchedWords;
+        }
+    }
+    
+    public static ResultContainer findAndReplacePattern(List<String> words, String pattern) {
+        List<String> matchedWords = new ArrayList<>();
+        String encodedPattern = encode(pattern);
+        
+        for (String word : words) {
+            if (word.length() == pattern.length() && encode(word).equals(encodedPattern)) {
+                matchedWords.add(word);
+            }
+        }
+        
+        return new ResultContainer(matchedWords.size(), matchedWords);
+    }
+    
+    private static String encode(String str) {
+        Map<Character, Integer> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        int id = 0;
+        
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (!map.containsKey(ch)) {
+                map.put(ch, id++);
+            }
+            sb.append(map.get(ch)).append(",");
+        }
+        return sb.toString();
+    }
+}
