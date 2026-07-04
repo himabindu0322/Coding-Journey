@@ -1,0 +1,38 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static int optimalStrategyOfGame(int[] coins, int n) {
+        // dp[i][j] stores the maximum value a player can collect from coins[i...j]
+        int[][] dp = new int[n][n];
+
+        // Loop for the gap length between 'i' and 'j'
+        for (int gap = 0; gap < n; gap++) {
+            for (int i = 0, j = gap; j < n; i++, j++) {
+                
+                // Base Case 1: If there is only 1 coin left, pick it
+                if (gap == 0) {
+                    dp[i][j] = coins[i];
+                }
+                // Base Case 2: If there are 2 coins left, pick the maximum of the two
+                else if (gap == 1) {
+                    dp[i][j] = Math.max(coins[i], coins[j]);
+                } 
+                // General Case: More than 2 coins
+                else {
+                    // Option A: You pick the i-th coin
+                    int pickFirst = coins[i] + Math.min(dp[i + 2][j], dp[i + 1][j - 1]);
+                    
+                    // Option B: You pick the j-th coin
+                    int pickLast = coins[j] + Math.min(dp[i + 1][j - 1], dp[i][j - 2]);
+                    
+                    // Take the choice that yields the maximum value
+                    dp[i][j] = Math.max(pickFirst, pickLast);
+                }
+            }
+        }
+
+        // The answer for the entire line of coins from index 0 to n-1
+        return dp[0][n - 1];
+    }
+}
