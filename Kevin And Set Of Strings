@@ -1,0 +1,41 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution 
+{
+    public static int distinctStrings(ArrayList<String> arr, int n)
+    {
+        // A Set to automatically capture unique canonical forms
+        Set<String> uniqueRepresentations = new HashSet<>();
+        
+        for (String s : arr) {
+            // Lists or string-builders to separate indices
+            StringBuilder evenChars = new StringBuilder();
+            StringBuilder oddChars = new StringBuilder();
+            
+            for (int i = 0; i < s.length(); i++) {
+                if (i % 2 == 0) {
+                    evenChars.append(s.charAt(i));
+                } else {
+                    oddChars.append(s.charAt(i));
+                }
+            }
+            
+            // Sort the characters belonging to even positions
+            char[] evenArr = evenChars.toString().toCharArray();
+            Arrays.sort(evenArr);
+            
+            // Sort the characters belonging to odd positions
+            char[] oddArr = oddChars.toString().toCharArray();
+            Arrays.sort(oddArr);
+            
+            // Construct a distinct fingerprint key for this equivalence group
+            String fingerprint = new String(evenArr) + "#" + new String(oddArr);
+            
+            uniqueRepresentations.add(fingerprint);
+        }
+        
+        // The size of the set represents the count of truly distinct strings left
+        return uniqueRepresentations.size();
+    }
+}
