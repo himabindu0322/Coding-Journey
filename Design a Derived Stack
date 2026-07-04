@@ -1,0 +1,67 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+
+public class Main {
+    public static void userLogic(int capacity, List<String> operations) {
+        int[] stack = new int[capacity];
+        int top = 0; // points to the next open slot
+        
+        List<String> results = new ArrayList<>();
+        
+        // The stack initialization itself outputs "null"
+        results.add("null");
+        
+        for (String op : operations) {
+            if (op.startsWith("push")) {
+                int val = Integer.parseInt(op.split(" ")[1]);
+                if (top < capacity) {
+                    stack[top] = val;
+                    top++;
+                }
+                results.add("null");
+                
+            } else if (op.equals("pop")) {
+                if (top == 0) {
+                    results.add("-1");
+                } else {
+                    top--;
+                    results.add(String.valueOf(stack[top]));
+                }
+                
+            } else if (op.startsWith("increment")) {
+                String[] parts = op.split(" ");
+                int k = Integer.parseInt(parts[1]);
+                int inc = Integer.parseInt(parts[2]);
+                
+                // Increment only up to the total elements currently present
+                int limit = Math.min(k, top);
+                for (int i = 0; i < limit; i++) {
+                    stack[i] += inc;
+                }
+                results.add("null");
+            }
+        }
+        
+        // Print the output space-separated as expected by the array-of-strings logic
+        System.out.println(String.join(" ", results));
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String capacityStr = reader.readLine();
+        if (capacityStr == null || capacityStr.trim().isEmpty()) return;
+        
+        int capacity = Integer.parseInt(capacityStr.trim());
+        int numOperations = Integer.parseInt(reader.readLine().trim());
+        
+        List<String> operations = new ArrayList<>();
+        for (int i = 0; i < numOperations; i++) {
+            operations.add(reader.readLine().trim());
+        }
+
+        userLogic(capacity, operations);
+    }
+}
