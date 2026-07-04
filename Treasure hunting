@@ -1,0 +1,61 @@
+import java.util.*;
+
+class Main {
+    // Change return type to long to avoid truncation or wrapping into negative values
+    public static long user_logic(int n, int[] a, int[] b) {
+        int numStates = 1 << n;
+        long[] dp = new long[numStates];
+        
+        // Initialize DP array with a high value acting as infinity
+        Arrays.fill(dp, Long.MAX_VALUE);
+        dp[0] = 0;
+        
+        for (int mask = 0; mask < numStates; mask++) {
+            if (dp[mask] == Long.MAX_VALUE) {
+                continue;
+            }
+            
+            int i = Integer.bitCount(mask);
+            if (i == n) {
+                continue;
+            }
+            
+            for (int j = 0; j < n; j++) {
+                // Check if the j-th bit is available
+                if ((mask & (1 << j)) == 0) {
+                    int nextMask = mask | (1 << j);
+                    
+                    // Safely execute the bitwise XOR operation using 64-bit primitives
+                    long cost = (long) a[i] ^ (long) b[j];
+                    
+                    if (dp[mask] + cost < dp[nextMask]) {
+                        dp[nextMask] = dp[mask] + cost;
+                    }
+                }
+            }
+        }
+        
+        return dp[numStates - 1];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        int n = sc.nextInt();
+        int[] a = new int[n];
+        int[] b = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            a[i] = sc.nextInt();
+        }
+        for (int i = 0; i < n; i++) {
+            b[i] = sc.nextInt();
+        }
+        sc.close();
+        
+        // Compute and print as a full long value
+        long result = user_logic(n, a, b);
+        System.out.println(result);
+    }
+}
