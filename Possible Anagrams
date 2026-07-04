@@ -1,0 +1,65 @@
+import java.util.*;
+
+public class Main {
+    public static List<Integer> findAnagramIndices(String secret1, String secret2) {
+        List<Integer> result = new ArrayList<>();
+        int len1 = secret1.length();
+        int len2 = secret2.length();
+
+        // Edge case: If secret2 is longer than secret1, no anagram can exist
+        if (len1 < len2) {
+            return result;
+        }
+
+        // Frequency arrays for lowercase English letters
+        int[] secret2Freq = new int[26];
+        int[] windowFreq = new int[26];
+
+        // Step 1: Initialize frequencies for secret2 and the first window of secret1
+        for (int i = 0; i < len2; i++) {
+            secret2Freq[secret2.charAt(i) - 'a']++;
+            windowFreq[secret1.charAt(i) - 'a']++;
+        }
+
+        // Check if the very first window matches
+        if (Arrays.equals(secret2Freq, windowFreq)) {
+            result.add(0);
+        }
+
+        // Step 2: Slide the window across secret1
+        for (int i = len2; i < len1; i++) {
+            // Include the new character entering the window from the right
+            windowFreq[secret1.charAt(i) - 'a']++;
+            
+            // Exclude the old character leaving the window from the left
+            windowFreq[secret1.charAt(i - len2) - 'a']--;
+
+            // If the frequencies match, record the starting index of the window
+            if (Arrays.equals(secret2Freq, windowFreq)) {
+                result.add(i - len2 + 1);
+            }
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNext()) return;
+        
+        String secret1 = scanner.next();
+        String secret2 = scanner.next();
+        scanner.close();
+        
+        List<Integer> result = findAnagramIndices(secret1, secret2);
+        
+        if (result.isEmpty()) {
+            System.out.println("Empty Array");
+        } else {
+            for (int index : result) {
+                System.out.print(index + " ");
+            }
+            System.out.println();
+        }
+    }
+}
