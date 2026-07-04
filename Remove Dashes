@@ -1,0 +1,48 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void processDashes(int n, String s) {
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            
+            if (ch == '_') {
+                // If there's a dash but no character left to remove, it's an invalid operation
+                if (sb.length() == 0) {
+                    System.out.println("-1");
+                    return;
+                }
+                // Remove the closest letter to the left (the last character added)
+                sb.deleteCharAt(sb.length() - 1);
+            } else {
+                // Add regular letters to our building string
+                sb.append(ch);
+            }
+        }
+        
+        // If the final string is empty, print "-1"
+        if (sb.length() == 0) {
+            System.out.println("-1");
+        } else {
+            System.out.println(sb.toString());
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String input = br.readLine();
+        if (input == null || input.trim().isEmpty()) return;
+        
+        String[] data = input.split(" ");
+        
+        int n = Integer.parseInt(data[0]);
+        // Handle cases where the string might be separated properly or on a newline
+        String s = data.length > 1 ? data[1] : br.readLine();
+        
+        if (s != null) {
+            processDashes(n, s.trim());
+        }
+    }
+}
