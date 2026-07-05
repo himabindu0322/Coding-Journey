@@ -1,0 +1,74 @@
+import java.util.List;
+
+class Solution {
+    public int[] pathsWithMaxScore(List<String> board) {
+        int n = board.size();
+        int MOD = 1_000_000_007;
+
+        // dp arrays to store maximum score and number of paths
+        int[][] maxScore = new int[n][n];
+        int[][] pathCount = new int[n][n];
+
+        // Initialize arrays
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                maxScore[i][j] = -1; // -1 denotes unreachable
+                pathCount[i][j] = 0;
+            }
+        }
+
+        // Base case: starting point 'S' at bottom-right
+        maxScore[n - 1][n - 1] = 0;
+        pathCount[n - 1][n - 1] = 1;
+
+        // Direction vectors for moving: down, right, down-right
+        int[] dr = {1, 0, 1};
+        int[] dc = {0, 1, 1};
+
+        // Traverse the board backwards from bottom-right to top-left
+        for (int r = n - 1; r >= 0; r--) {
+            for (int c = n - 1; c >= 0; c--) {
+                // Skip the starting point as it's already initialized
+                if (r == n - 1 && c == n - 1) continue;
+                
+                // Skip obstacles
+                if (board.get(r).charAt(c) == 'X') continue;
+
+                int maxPrevScore = -1;
+                int ways = 0;
+
+                // Look at the 3 possible cells we could have come from
+                for (int i = 0; i < 3; i++) {
+                    int prevR = r + dr[i];
+                    int prevC = c + dc[i];
+
+                    // Check boundaries and reachability
+                    if (prevR < n && prevC < n && maxScore[prevR][prevC] != -1) {
+                        if (maxScore[prevR][prevC] > maxPrevScore) {
+                            maxPrevScore = maxScore[prevR][prevC];
+                            ways = pathCount[prevR][prevC];
+                        } else if (maxScore[prevR][prevC] == maxPrevScore) {
+                            ways = (ways + pathCount[prevR][prevC]) % MOD;
+                        }
+                    }
+                }
+
+                // If this cell is reachable from at least one valid neighbor
+                if (maxPrevScore != -1) {
+                    char currChar = board.get(r).charAt(c);
+                    int currValue = (currChar == 'E') ? 0 : (currChar - '0');
+                    
+                    maxScore[r][c] = maxPrevScore + currValue;
+                    pathCount[r][c] = ways;
+                }
+            }
+        }
+
+        // If 'E' at (0,0) is unreachable, return [0, 0]
+        if (maxScore[0][0] == -1) {
+            return new int[]{0, 0};
+        }
+
+        return new int[]{maxScore[0][0], pathCount[0][0]};
+    }
+}
