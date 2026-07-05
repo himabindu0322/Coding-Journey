@@ -1,0 +1,117 @@
+import java.util.Arrays;
+
+public class Solution {
+    
+    // Fenwick Tree (Binary Indexed Tree) implementation to handle point updates and range sums
+    static class FenwickTree {
+        int[] tree;
+        int size;
+
+        FenwickTree(int size) {
+            this.size = size;
+            this.tree = new int[size + 1];
+        }
+
+        void update(int i, int delta) {
+            while (i <= size) {
+                tree[i] += delta;
+                i += i & (-i);
+            }
+        }
+
+        int query(int i) {
+            int sum = 0;
+            while (i > 0) {
+                sum += tree[i];
+                i -= i & (-i);
+            }
+            return sum;
+        }
+    }
+
+    // Helper class to store Sweet data
+    static class Sweet implements Comparable<Sweet> {
+        int sweetness;
+        int expiry;
+
+        Sweet(int sweetness, int expiry) {
+            this.sweetness = sweetness;
+            this.expiry = expiry;
+        }
+
+        @Override
+        public int compareTo(Sweet other) {
+            // Sort in descending order of sweetness
+            return Integer.compare(other.sweetness, this.sweetness);
+        }
+    }
+
+    // Helper class to map queries offline
+    static class Query implements Comparable<Query> {
+        int x; // Minimum sweetness
+        int y; // Minimum expiry
+        int index;
+
+        Query(int x, int y, int index) {
+            this.x = x;
+            this.y = y;
+            this.index = index;
+        }
+
+        @Override
+        public int compareTo(Query other) {
+            // Sort in descending order of minimum sweetness requirement
+            return Integer.compare(other.x, this.x);
+        }
+    }
+
+    public static int[] chocolatesAndSweetness(int n, int q, int[] expiry, int[] sweetness, int[][] query) {
+        Sweet[] sweets = new Sweet[n];
+        int maxExpiry = 0;
+
+        for (int i = 0; i < n; i++) {
+            sweets[i] = new Sweet(sweetness[i], expiry[i]);
+            if (expiry[i] > maxExpiry) {
+                maxExpiry = expiry[i];
+            }
+        }
+
+        // Parse query matrices into our offline structure
+        Query[] offlineQueries = new Query[q];
+        for (int i = 0; i < q; i++) {
+            offlineQueries[i] = new Query(query[i][0], query[i][1], i);
+            if (query[i][1] > maxExpiry) {
+                maxExpiry = query[i][1];
+            }
+        }
+
+        // Sort both datasets in descending order based on sweetness conditions
+        Arrays.sort(sweets);
+        Arrays.sort(offlineQueries);
+
+        // Max possible expiry boundary for Fenwick Tree sizing
+        FenwickTree bit = new FenwickTree(maxExpiry + 1);
+        int[] results = new int[q];
+        int sweetIdx = 0;
+        int currentAddedCount = 0;
+
+        // Process queries offline
+        for (int i = 0; i < q; i++) {
+            Query currQuery = offlineQueries[i];
+
+            // Insert all sweets that satisfy sweetness >= current query's X
+            while (sweetIdx < n && sweets[sweetIdx].sweetness >= currQuery.x) {
+                bit.update(sweets[sweetIdx].expiry, 1);
+                currentAddedCount++;
+                sweetIdx++;
+            }
+
+            // Expiry must be strictly greater than Y
+            // Total sweets added so far minus those whose expiry is <= Y
+            int validCount = currentAddedCount - bit.query(currQuery.y);
+            results[currQuery.index] = validCount;
+        }
+
+        return results;
+    }
+}
