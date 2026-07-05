@@ -1,0 +1,109 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    private static final long MOD = 1000000007L;
+    private static final long INV_4 = 250000002L; // Modular inverse of 4 mod 10^9+7
+
+    // Fast Modular Exponentiation: (base^exp) % MOD
+    private static long power(long base, long exp) {
+        long res = 1;
+        base %= MOD;
+        while (exp > 0) {
+            if ((exp & 1) == 1) res = (res * base) % MOD;
+            base = (base * base) % MOD;
+            exp >>= 1;
+        }
+        return res;
+    }
+
+    // Computes total ways to pick a subset of size divisible by 4 using roots of unity
+    private static long getWays(int x) {
+        if (x == 0) return 1;
+
+        long term1 = power(2, x);
+        long term2 = 0;
+        int rem = x % 8;
+
+        if (rem == 0) {
+            term2 = (2 * power(2, x / 2)) % MOD;
+        } else if (rem == 1) {
+            term2 = (2 * power(2, (x - 1) / 2)) % MOD;
+        } else if (rem == 2) {
+            term2 = 0;
+        } else if (rem == 3) {
+            term2 = (-2 * power(2, (x - 1) / 2)) % MOD;
+        } else if (rem == 4) {
+            term2 = (-2 * power(2, x / 2)) % MOD;
+        } else if (rem == 5) {
+            term2 = (-2 * power(2, (x - 1) / 2)) % MOD;
+        } else if (rem == 6) {
+            term2 = 0;
+        } else if (rem == 7) {
+            term2 = (2 * power(2, (x - 1) / 2)) % MOD;
+        }
+
+        long total = (term1 + term2) % MOD;
+        if (total < 0) total += MOD;
+
+        return (total * INV_4) % MOD;
+    }
+
+    public static int king(List<Integer> army, int k) {
+        long[] dp = new long[k + 1];
+        dp[0] = 1; // Base case: 1 way to select 0 detachments
+
+        for (int numSoldiers : army) {
+            long ways = getWays(numSoldiers);
+            
+            // Backwards iteration prevents using the same battalion elements multiple times
+            for (int j = k; j >= 1; j--) {
+                dp[j] = (dp[j] + dp[j - 1] * ways) % MOD;
+            }
+        }
+
+        return (int) dp[k];
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        
+        // Using System.getenv("OUTPUT_PATH") as requested by HackerRank's template
+        String outputPath = System.getenv("OUTPUT_PATH");
+        BufferedWriter bufferedWriter;
+        if (outputPath != null) {
+            bufferedWriter = new BufferedWriter(new FileWriter(outputPath));
+        } else {
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+        }
+
+        String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+
+        int n = Integer.parseInt(firstMultipleInput[0]);
+        int k = Integer.parseInt(firstMultipleInput[1]);
+
+        List<Integer> army = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+            .map(Integer::parseInt)
+            .collect(toList());
+
+        int result = Result.king(army, k);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
