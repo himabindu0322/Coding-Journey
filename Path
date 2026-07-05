@@ -1,0 +1,42 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int user_logic(int n, String s) {
+        // Frequency array to keep track of the count of each piece ('a' through 'z')
+        int[] inventory = new int[26];
+        int extraPiecesBought = 0;
+
+        // Iterate through each character in the sequence
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+
+            // If it's a piece (lowercase letter)
+            if (Character.isLowerCase(ch)) {
+                inventory[ch - 'a']++;
+            } 
+            // If it's a puzzle (uppercase letter)
+            else if (Character.isUpperCase(ch)) {
+                char requiredPiece = Character.toLowerCase(ch);
+                int index = requiredPiece - 'a';
+
+                // Check if we have the required piece in our inventory
+                if (inventory[index] > 0) {
+                    inventory[index]--; // Use one piece to solve the puzzle
+                } else {
+                    extraPiecesBought++; // No piece available; we must buy one
+                }
+            }
+        }
+
+        return extraPiecesBought;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        String s = scanner.next();
+
+        int result = user_logic(n, s);
+        System.out.println(result);
+    }
+}
