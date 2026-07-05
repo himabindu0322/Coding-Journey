@@ -1,0 +1,41 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class Solution {
+    public static int kDistinctSubarrays(int[] arr, int n, int k) {
+        // Answer is (subarrays with <= k distinct) - (subarrays with <= k-1 distinct)
+        return countAtMostKDistinct(arr, n, k) - countAtMostKDistinct(arr, n, k - 1);
+    }
+
+    private static int countAtMostKDistinct(int[] arr, int n, int k) {
+        if (k <= 0) {
+            return 0;
+        }
+
+        int left = 0;
+        int count = 0;
+        // Map to store frequencies of elements in the current window
+        Map<Integer, Integer> freqMap = new HashMap<>();
+
+        for (int right = 0; right < n; right++) {
+            // Add the current element to the window
+            freqMap.put(arr[right], freqMap.getOrDefault(arr[right], 0) + 1);
+
+            // If the window has more than k distinct elements, shrink it from the left
+            while (freqMap.size() > k) {
+                int leftElement = arr[left];
+                freqMap.put(leftElement, freqMap.get(leftElement) - 1);
+                
+                if (freqMap.get(leftElement) == 0) {
+                    freqMap.remove(leftElement);
+                }
+                left++;
+            }
+
+            // All subarrays from index 'left' to 'right' have <= k distinct elements
+            count += (right - left + 1);
+        }
+
+        return count;
+    }
+}
