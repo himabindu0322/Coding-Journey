@@ -1,0 +1,76 @@
+import java.util.*;
+
+class Node {
+    int data;
+    Node next;
+    Node(int data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+public class Main {
+    public static int countNodes(Node head) {
+        // Base case: If list is empty, has 1 node, or 2 nodes, no peak can exist.
+        if (head == null || head.next == null || head.next.next == null) {
+            return 0;
+        }
+
+        int peakCount = 0;
+        Node prev = head;
+        Node curr = head.next;
+
+        // Traverse until the second-to-last node
+        while (curr.next != null) {
+            Node nextNode = curr.next;
+
+            // Check the peak condition
+            if (curr.data > prev.data && curr.data > nextNode.data) {
+                peakCount++;
+            }
+
+            // Move the pointers forward
+            prev = curr;
+            curr = nextNode;
+        }
+
+        return peakCount;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Handling input matching standard platforms
+        if (!sc.hasNextLine()) return;
+        String line1 = sc.nextLine().trim();
+        if (line1.isEmpty()) return;
+        int n = Integer.parseInt(line1);
+
+        if (!sc.hasNextLine()) return;
+        String line2 = sc.nextLine().trim();
+        String[] data = line2.split("\\s+");
+        
+        List<Integer> elements = new ArrayList<>();
+        for (String s : data) {
+            if (!s.isEmpty()) {
+                elements.add(Integer.parseInt(s));
+            }
+        }
+        
+        Node head = null;
+        Node tail = null;
+        for (int elem : elements) {
+            Node newNode = new Node(elem);
+            if (head == null) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
+            }
+        }
+        
+        int result = countNodes(head);
+        System.out.println(result);
+    }
+}
