@@ -1,0 +1,26 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+    public static void main (String[] args) throws java.lang.Exception
+    {
+        // Use Scanner to read input from standard input
+        Scanner sc = new Scanner(System.in);
+        
+        if (sc.hasNextInt()) {
+            int R = sc.nextInt();
+            int C = sc.nextInt();
+            int W = sc.nextInt();
+            
+            // Calculate total power
+            int totalPower = R * C * W;
+            
+            // Print the result
+            System.out.println(totalPower);
+        }
+        
+        sc.close();
+    }
+}
