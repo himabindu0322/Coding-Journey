@@ -1,0 +1,74 @@
+import java.util.*;
+
+public class Main {
+    public static void changeLongest(int[] arr, int x) {
+        if (arr == null || arr.length == 0) return;
+        
+        // Find the maximum height
+        int maxHeight = arr[0];
+        for (int height : arr) {
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
+        }
+        
+        // Reduce all poles that have the maximum height
+        int newHeight = Math.max(0, maxHeight - x);
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == maxHeight) {
+                arr[i] = newHeight;
+            }
+        }
+    }
+
+    public static boolean poleArrangement(int[] arr) {
+        int n = arr.length;
+        if (n < 3) return false;
+
+        // Stack to store the elements representing the middle (tallest/3) pole
+        Stack<Integer> stack = new Stack<>();
+        
+        // This variable keeps track of the best candidate for the last pole (2 in 132 pattern)
+        int third = Integer.MIN_VALUE;
+
+        // Traverse the array from right to left
+        for (int i = n - 1; i >= 0; i--) {
+            // If we find a pole smaller than 'third', we found a valid 132-pattern (tent)
+            if (arr[i] < third) {
+                return true;
+            }
+
+            // If the current element is greater than stack's top, 
+            // it means the top element is a valid candidate for the 'third' pole.
+            while (!stack.isEmpty() && arr[i] > stack.peek()) {
+                third = stack.pop();
+            }
+
+            // Push current element as a candidate for the middle pole
+            stack.push(arr[i]);
+        }
+
+        return false; 
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        
+        int n = scanner.nextInt();
+        int x = scanner.nextInt();
+        int[] arr = new int[n];
+        for (int i = 0; i < n; ++i) {
+            arr[i] = scanner.nextInt();
+        }
+        
+        // Modify the array by reducing the tallest poles by x units
+        changeLongest(arr, x);
+        
+        // Determine if it is possible to choose three poles to make the tent
+        boolean result = poleArrangement(arr);
+        
+        // Print the result as 1 for True and 0 for False
+        System.out.println(result ? 1 : 0);
+    }
+}
