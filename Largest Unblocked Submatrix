@@ -1,0 +1,45 @@
+import java.util.Arrays;
+
+class Solution {
+    public int largestArea(int n, int m, int k, int[][] arr) {
+        // Arrays to store blocked rows and columns along with boundaries
+        // Size is k + 2 to accommodate the virtual borders (0 and n+1 / m+1)
+        int[] rows = new int[k + 2];
+        int[] cols = new int[k + 2];
+        
+        // Add starting boundary conditions
+        rows[0] = 0;
+        cols[0] = 0;
+        
+        // Extract blocked rows and columns
+        for (int i = 0; i < k; i++) {
+            rows[i + 1] = arr[i][0];
+            cols[i + 1] = arr[i][1];
+        }
+        
+        // Add ending boundary conditions
+        rows[k + 1] = n + 1;
+        cols[k + 1] = m + 1;
+        
+        // Sort both arrays to find consecutive gaps
+        Arrays.sort(rows);
+        Arrays.sort(cols);
+        
+        // Find the maximum continuous segment of unblocked rows
+        int maxH = 0;
+        for (int i = 1; i < rows.length; i++) {
+            int currentGap = rows[i] - rows[i - 1] - 1;
+            maxH = Math.max(maxH, currentGap);
+        }
+        
+        // Find the maximum continuous segment of unblocked columns
+        int maxW = 0;
+        for (int i = 1; i < cols.length; i++) {
+            int currentGap = cols[i] - cols[i - 1] - 1;
+            maxW = Math.max(maxW, currentGap);
+        }
+        
+        // The largest continuous unblocked matrix area is the product of max gaps
+        return maxH * maxW;
+    }
+}
