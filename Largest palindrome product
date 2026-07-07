@@ -1,0 +1,64 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    // List to store all precomputed 6-digit palindromes made from two 3-digit numbers
+    private static List<Integer> palindromes = new ArrayList<>();
+
+    static {
+        Set<Integer> uniquePalindromes = new TreeSet<>();
+        
+        // Generate all products of two 3-digit numbers
+        for (int i = 100; i <= 999; i++) {
+            for (int j = i; j <= 999; j++) {
+                int product = i * j;
+                if (isPalindrome(product)) {
+                    uniquePalindromes.add(product);
+                }
+            }
+        }
+        // Convert to an ordered list for fast binary search access
+        palindromes.addAll(uniquePalindromes);
+    }
+
+    // Helper method to check if a number is a palindrome
+    private static boolean isPalindrome(int number) {
+        int original = number;
+        int reversed = 0;
+        while (number > 0) {
+            reversed = reversed * 10 + (number % 10);
+            number /= 10;
+        }
+        return original == reversed;
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int t = in.nextInt();
+        
+        for (int a0 = 0; a0 < t; a0++) {
+            int n = in.nextInt();
+            System.out.println(findLargestPalindromeLessThan(n));
+        }
+        in.close();
+    }
+
+    // Binary search to find the largest palindrome strictly less than N
+    private static int findLargestPalindromeLessThan(int n) {
+        int low = 0;
+        int high = palindromes.size() - 1;
+        int ans = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (palindromes.get(mid) < n) {
+                ans = palindromes.get(mid); // Candidate found, try to look for a larger one
+                low = mid + 1;
+            } else {
+                high = mid - 1; // Element is >= n, search left side
+            }
+        }
+        return ans;
+    }
+}
