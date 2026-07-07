@@ -1,0 +1,105 @@
+import java.util.*;
+
+public class Solution {
+
+    public static long moveSteps(int n, int[] mines, int l) {
+        // Upper bound for primes based on constraints (N <= 10^5)
+        int MAX = 100010;
+        boolean[] isPrime = new boolean[MAX + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = isPrime[1] = false;
+
+        for (int i = 2; i * i <= MAX; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= MAX; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        // Gather all primes in sorted order
+        List<Integer> primeList = new ArrayList<>();
+        for (int i = 2; i <= MAX; i++) {
+            if (isPrime[i]) {
+                primeList.add(i);
+            }
+        }
+
+        // Map to store special jump destinations from each prime position
+        Map<Integer, Integer> specialJumps = new HashMap<>();
+        for (int i = 0; i < primeList.size() - 1; i++) {
+            int currentPrime = primeList.get(i);
+            int nextPrime = primeList.get(i + 1);
+
+            // Number of primes before currentPrime is exactly its 0-based index 'i'
+            int value = i + (nextPrime - currentPrime);
+
+            // Compute digital sum (single digit root)
+            int digitSum = (value == 0) ? 0 : (value % 9 == 0 ? 9 : value % 9);
+
+            specialJumps.put(currentPrime, currentPrime + digitSum);
+        }
+
+        // Use a set for fast O(1) mine lookups
+        Set<Integer> mineSet = new HashSet<>();
+        for (int mine : mines) {
+            mineSet.add(mine);
+        }
+
+        // Visited tracking array: visited[position][cooldown_remaining]
+        boolean[][] visited = new boolean[n + 1][l + 1];
+        
+        // BFS Queue stores arrays of structure: {current_position, cooldown_remaining, steps_taken}
+        Queue<int[]> queue = new LinkedList<>();
+        
+        // Initialize at position 1, with 0 cooldown remaining, 0 steps taken
+        queue.add(new int[]{1, 0, 0});
+        visited[1][0] = true;
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int pos = current[0];
+            int cooldown = current[1];
+            int steps = current[2];
+
+            // If we have arrived at or exceeded the target position N
+            if (pos == n) {
+                return steps;
+            }
+
+            // Next cooldown decays down to 0
+            int nextCooldown = Math.max(0, cooldown - 1);
+
+            // 1. Regular Move: Move 1 step forward
+            if (pos + 1 <= n && !mineSet.contains(pos + 1)) {
+                if (!visited[pos + 1][nextCooldown]) {
+                    visited[pos + 1][nextCooldown] = true;
+                    queue.add(new int[]{pos + 1, nextCooldown, steps + 1});
+                }
+            }
+
+            // 2. Regular Move: Move 2 steps forward
+            if (pos + 2 <= n && !mineSet.contains(pos + 2)) {
+                if (!visited[pos + 2][nextCooldown]) {
+                    visited[pos + 2][nextCooldown] = true;
+                    queue.add(new int[]{pos + 2, nextCooldown, steps + 1});
+                }
+            }
+
+            // 3. Special Move: Can only trigger if at a prime and cooldown is 0
+            if (cooldown == 0 && specialJumps.containsKey(pos)) {
+                int specialDest = specialJumps.get(pos);
+                if (specialDest <= n && !mineSet.contains(specialDest)) {
+                    // Making a special move resets the cooldown back to 'l'
+                    if (!visited[specialDest][l]) {
+                        visited[specialDest][l] = true;
+                        queue.add(new int[]{specialDest, l, steps + 1});
+                    }
+                }
+            }
+        }
+
+        // If the destination is unreachable
+        return -1;
+    }
+}
