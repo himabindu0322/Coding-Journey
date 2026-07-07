@@ -1,0 +1,35 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int LongestConsecutiveCharacter(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+
+        int maxLen = 1;
+        int currentLen = 1;
+
+        // Traverse the string starting from the second character
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) == s.charAt(i - 1)) {
+                currentLen++; // Character matches the previous one, increment the streak
+            } else {
+                maxLen = Math.max(maxLen, currentLen); // Update global max before resetting
+                currentLen = 1; // Reset streak for the new character
+            }
+        }
+
+        // Final check to handle the case where the longest substring ends at the last index
+        return Math.max(maxLen, currentLen);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            String s = scanner.nextLine().trim();
+            int result = LongestConsecutiveCharacter(s);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
