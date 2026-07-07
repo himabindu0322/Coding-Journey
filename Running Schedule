@@ -1,0 +1,41 @@
+import java.util.*;
+
+public class Main {
+    static int findSnoopDayIndex(int n, int[] arr) {
+        // Step 1: Calculate the total distance run over all days
+        long totalDistance = 0;
+        for (int i = 0; i < n; i++) {
+            totalDistance += arr[i];
+        }
+
+        // Step 2: Define the target distance (at least half of total)
+        // (totalDistance + 1) / 2 acts as Math.ceil(totalDistance / 2.0) using integer math
+        long target = (totalDistance + 1) / 2;
+
+        // Step 3: Find the first day where running sum reaches or exceeds the target
+        long runningSum = 0;
+        for (int i = 0; i < n; i++) {
+            runningSum += arr[i];
+            if (runningSum >= target) {
+                // Return 1-based index of the day
+                return i + 1;
+            }
+        }
+
+        return -1; // Fallback placeholder
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = scanner.nextInt();
+            }
+            int result = findSnoopDayIndex(n, arr);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
