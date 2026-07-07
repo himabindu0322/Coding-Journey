@@ -1,0 +1,75 @@
+import java.util.*;
+
+public class Main {
+    public static void calculateSubordinates(int V, List<Integer> hierarchy, List<Integer> result) {
+        // Handle edge case where there's only 1 employee
+        if (V <= 1) {
+            return;
+        }
+
+        // Array to store the immediate boss for each employee (1-indexed)
+        int[] bossOf = new int[V + 1];
+        // Array to store how many direct subordinates each employee has
+        int[] inDegree = new int[V + 1];
+
+        // Fill the boss array and calculate in-degrees
+        // The i-th element in hierarchy corresponds to the boss of employee (i + 2)
+        for (int i = 0; i < V - 1; i++) {
+            int employee = i + 2;
+            int boss = hierarchy.get(i);
+            bossOf[employee] = boss;
+            inDegree[boss]++;
+        }
+
+        // Queue to process employees from the bottom of the hierarchy upwards (leaves first)
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 1; i <= V; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        // Array to store the count of subordinates for each employee
+        int[] subCount = new int[V + 1];
+
+        // Process bottom-up to prevent StackOverflowError
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            int boss = bossOf[current];
+
+            // If the current employee has a boss (i.e., is not the top boss)
+            if (boss != 0) {
+                // The boss gets all subordinates of 'current', plus 'current' themselves (+1)
+                subCount[boss] += (subCount[current] + 1);
+                
+                inDegree[boss]--;
+                // If all subordinates of this boss have been processed, add boss to queue
+                if (inDegree[boss] == 0) {
+                    queue.add(boss);
+                }
+            }
+        }
+
+        // Copy the computed counts back into the result list template (0-indexed)
+        for (int i = 0; i < V; i++) {
+            result.set(i, subCount[i + 1]);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            int V = sc.nextInt();
+            List<Integer> hierarchy = new ArrayList<>();
+            for (int i = 0; i < V - 1; i++) {
+                hierarchy.add(sc.nextInt());
+            }
+            List<Integer> result = new ArrayList<>(Collections.nCopies(V, 0));
+            calculateSubordinates(V, hierarchy, result);
+            for (int i = 0; i < V; i++) {
+                System.out.print(result.get(i) + " ");
+            }
+        }
+        sc.close();
+    }
+}
