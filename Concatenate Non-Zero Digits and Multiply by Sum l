@@ -1,0 +1,32 @@
+class Solution {
+    public long sumAndMultiply(int n) {
+        // Edge case: if n is 0, the result is 0
+        if (n == 0) {
+            return 0;
+        }
+
+        String s = Integer.toString(n);
+        StringBuilder xStr = new StringBuilder();
+        long sum = 0;
+
+        // Extract non-zero digits
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch != '0') {
+                xStr.append(ch);
+                sum += (ch - '0');
+            }
+        }
+
+        // If there were no non-zero digits (e.g., n = 000)
+        if (xStr.length() == 0) {
+            return 0;
+        }
+
+        // Convert the string representation of x to a long
+        long x = Long.parseLong(xStr.toString());
+
+        // Return the product
+        return x * sum;
+    }
+}
