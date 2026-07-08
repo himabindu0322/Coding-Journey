@@ -1,0 +1,31 @@
+class Solution {
+    public int countKdivPairs(int[] arr, int k) {
+        // Frequency array to store count of remainders
+        // Since 1 <= k, size k is sufficient
+        long[] remFreq = new long[k];
+        
+        // Count frequencies of each remainder
+        for (int num : arr) {
+            int rem = num % k;
+            remFreq[rem]++;
+        }
+        
+        long totalPairs = 0;
+        
+        // 1. Pairs formed by numbers perfectly divisible by k (remainder 0)
+        totalPairs += (remFreq[0] * (remFreq[0] - 1)) / 2;
+        
+        // 2. Pairs formed by complementary remainders i and k - i
+        for (int i = 1; i <= k / 2; i++) {
+            if (i == k - i) {
+                // Special case: if k is even and i == k / 2
+                totalPairs += (remFreq[i] * (remFreq[i] - 1)) / 2;
+            } else {
+                // General case: remainder i matching with remainder k - i
+                totalPairs += remFreq[i] * remFreq[k - i];
+            }
+        }
+        
+        return (int) totalPairs;
+    }
+}
