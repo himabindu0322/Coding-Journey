@@ -1,0 +1,59 @@
+class Solution {
+    public int[] sumAndMultiply(String s, int[][] queries) {
+        int m = s.length();
+        long MOD = 1_000_000_007L;
+
+        // Precompute powers of 10
+        long[] power10 = new long[m + 1];
+        power10[0] = 1;
+        for (int i = 1; i <= m; i++) {
+            power10[i] = (power10[i - 1] * 10) % MOD;
+        }
+
+        // Prefix arrays
+        long[] prefixSum = new long[m + 1];
+        long[] prefixX = new long[m + 1];
+        int[] nonZeroCount = new int[m + 1];
+
+        for (int i = 0; i < m; i++) {
+            int digit = s.charAt(i) - '0';
+            
+            if (digit > 0) {
+                prefixSum[i + 1] = prefixSum[i] + digit;
+                prefixX[i + 1] = (prefixX[i] * 10 + digit) % MOD;
+                nonZeroCount[i + 1] = nonZeroCount[i] + 1;
+            } else {
+                prefixSum[i + 1] = prefixSum[i];
+                prefixX[i + 1] = prefixX[i];
+                nonZeroCount[i + 1] = nonZeroCount[i];
+            }
+        }
+
+        // Process each query
+        int[] answer = new int[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            int L = queries[i][0];
+            int R = queries[i][1];
+
+            // 1. Calculate the sum of digits in the range
+            long currentSum = prefixSum[R + 1] - prefixSum[L];
+
+            // 2. Calculate the count of non-zero digits in the range
+            int k = nonZeroCount[R + 1] - nonZeroCount[L];
+
+            if (k == 0) {
+                answer[i] = 0;
+                continue;
+            }
+
+            // 3. Extract x modulo 10^9 + 7
+            long x = (prefixX[R + 1] - (prefixX[L] * power10[k]) % MOD + MOD) % MOD;
+
+            // 4. Calculate final answer for the query
+            long queryAns = (x * (currentSum % MOD)) % MOD;
+            answer[i] = (int) queryAns;
+        }
+
+        return answer;
+    }
+}
