@@ -1,0 +1,24 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static int[] anagramMapping(int n, int[] a, int[] b) {
+        // Map to store the element to index mapping of array B
+        Map<Integer, Integer> bIndexMap = new HashMap<>();
+        
+        // Populate the map with elements from B and their corresponding indices
+        for (int i = 0; i < n; i++) {
+            bIndexMap.put(b[i], i);
+        }
+        
+        // Array to store the final mapping result
+        int[] result = new int[n];
+        
+        // Find the index of each element of A in B using our map
+        for (int i = 0; i < n; i++) {
+            result[i] = bIndexMap.get(a[i]);
+        }
+        
+        return result;
+    }
+}
