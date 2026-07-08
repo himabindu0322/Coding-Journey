@@ -1,0 +1,31 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		if (sc.hasNextInt()) {
+			int T = sc.nextInt();
+			
+			while (T-- > 0) {
+				int R = sc.nextInt();
+				int Y = sc.nextInt();
+				
+				// Red cards can absorb up to R yellow cards
+				int remainingYellows = Math.max(0, Y - R);
+				
+				// Every 2 remaining yellow cards will cause 1 send-off
+				int extraSendOffs = remainingYellows / 2;
+				
+				// Total minimum send-offs is the mandatory red card send-offs + extra yellow send-offs
+				int totalSendOffs = R + extraSendOffs;
+				
+				System.out.println(totalSendOffs);
+			}
+		}
+	}
+}
