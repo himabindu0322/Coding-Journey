@@ -1,0 +1,56 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static int dominantNumber(int[] arr, int n) {
+        if (arr == null || n == 0) {
+            return -1;
+        }
+
+        // Step 1: Find potential candidates using Boyer-Moore Majority Vote variant
+        int candidate1 = -1, candidate2 = -1;
+        int count1 = 0, count2 = 0;
+
+        for (int num : arr) {
+            if (num == candidate1) {
+                count1++;
+            } else if (num == candidate2) {
+                count2++;
+            } else if (count1 == 0) {
+                candidate1 = num;
+                count1 = 1;
+            } else if (count2 == 0) {
+                candidate2 = num;
+                count2 = 1;
+            } else {
+                count1--;
+                count2--;
+            }
+        }
+
+        // Step 2: Manually check the actual frequency of both candidates
+        int actualCount1 = 0;
+        int actualCount2 = 0;
+
+        for (int num : arr) {
+            if (num == candidate1) {
+                actualCount1++;
+            } else if (num == candidate2) {
+                actualCount2++;
+            }
+        }
+
+        // Calculate the threshold limit
+        int threshold = n / 3;
+
+        // Since the problem statement notes there is only one such element (if it exists)
+        if (actualCount1 > threshold) {
+            return candidate1;
+        }
+        if (actualCount2 > threshold) {
+            return candidate2;
+        }
+
+        return -1;
+    }
+}
