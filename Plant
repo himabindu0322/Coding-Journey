@@ -1,0 +1,40 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		// Read the number of test cases
+		if (sc.hasNextInt()) {
+			int T = sc.nextInt();
+			
+			// Process each test case
+			while (T-- > 0) {
+				int N = sc.nextInt();
+				int[] A = new int[N];
+				
+				for (int i = 0; i < N; i++) {
+					A[i] = sc.nextInt();
+				}
+				
+				int maxHeight = 0;
+				
+				// Check every consecutive pair of days
+				for (int i = 0; i < N - 1; i++) {
+					int currentMin = Math.min(A[i], A[i + 1]);
+					// Update maxHeight if the current pair gives a larger height
+					if (currentMin > maxHeight) {
+						maxHeight = currentMin;
+					}
+				}
+				
+				// Print the result for the current test case
+				System.out.println(maxHeight);
+			}
+		}
+	}
+}
