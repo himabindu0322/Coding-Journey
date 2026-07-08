@@ -1,0 +1,42 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        // Precompute primes up to a safe limit
+        int LIMIT = 105000;
+        boolean[] isPrime = new boolean[LIMIT + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = false;
+        isPrime[1] = false;
+
+        for (int p = 2; p * p <= LIMIT; p++) {
+            if (isPrime[p]) {
+                for (int i = p * p; i <= LIMIT; i += p) {
+                    isPrime[i] = false;
+                }
+            }
+        }
+
+        // Gather all precomputed primes into a dynamic list
+        List<Integer> primes = new ArrayList<>();
+        for (int i = 2; i <= LIMIT; i++) {
+            if (isPrime[i]) {
+                primes.add(i);
+            }
+        }
+
+        // Process test cases
+        Scanner in = new Scanner(System.in);
+        if (in.hasNextInt()) {
+            int t = in.nextInt();
+            for (int a0 = 0; a0 < t; a0++) {
+                int n = in.nextInt();
+                // Since N is 1-indexed (e.g., 1st prime is 2), access index n - 1
+                System.out.println(primes.get(n - 1));
+            }
+        }
+        in.close();
+    }
+}
