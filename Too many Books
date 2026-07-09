@@ -1,0 +1,49 @@
+import java.util.*;
+
+public class Main {
+    public static int max_books_on_shelf(int[] heights) {
+        if (heights == null || heights.length == 0) {
+            return 0;
+        }
+
+        // tails array will store the active strictly increasing subsequence
+        int[] tails = new int[heights.length];
+        int len = 0; // Length of the longest increasing subsequence found
+
+        for (int x : heights) {
+            // Binary search to find the correct insertion position for x
+            int i = 0, j = len;
+            while (i < j) {
+                int mid = i + (j - i) / 2;
+                if (tails[mid] < x) {
+                    i = mid + 1;
+                } else {
+                    j = mid;
+                }
+            }
+            
+            // Put x at its optimal position
+            tails[i] = x;
+            
+            // If x was placed at the end, it extended the subsequence
+            if (i == len) {
+                len++;
+            }
+        }
+
+        return len;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        int n = scanner.nextInt();
+        int[] heights = new int[n];
+        for (int i = 0; i < n; i++) {
+            heights[i] = scanner.nextInt();
+        }
+        int result = max_books_on_shelf(heights);
+        System.out.println(result);
+        scanner.close();
+    }
+}
