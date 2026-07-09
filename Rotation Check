@@ -1,0 +1,31 @@
+public class Solution {
+    public static boolean isCyclicRotation(long[] arr1, long[] arr2, int n) {
+        // Edge case: If arrays are empty, they are technically rotations of each other
+        if (n == 0) {
+            return true;
+        }
+
+        // Iterate through arr1 to find a starting element that matches arr2[0]
+        for (int i = 0; i < n; i++) {
+            if (arr1[i] == arr2[0]) {
+                boolean isMatch = true;
+                
+                // Verify if the entire cyclic sequence matches from this starting index
+                for (int j = 0; j < n; j++) {
+                    if (arr1[(i + j) % n] != arr2[j]) {
+                        isMatch = false;
+                        break; // Mismatch found, break early and try the next starting index
+                    }
+                }
+                
+                // If a full match is found, arr2 is a cyclic rotation
+                if (isMatch) {
+                    return true;
+                }
+            }
+        }
+        
+        // No valid rotation matches found
+        return false;
+    }
+}
