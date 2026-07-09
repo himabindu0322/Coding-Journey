@@ -1,0 +1,38 @@
+import java.util.Scanner;
+
+public class Main {
+    // Helper method to compute the sum of squares of digits
+    private static int getNext(int n) {
+        int sum = 0;
+        while (n > 0) {
+            int digit = n % 10;
+            sum += digit * digit;
+            n /= 10;
+        }
+        return sum;
+    }
+
+    public static boolean isHappyNumber(int n) {
+        int slow = n;
+        int fast = getNext(n);
+
+        // Run until fast meets slow or fast reaches 1
+        while (fast != 1 && slow != fast) {
+            slow = getNext(slow);         // Moves 1 step
+            fast = getNext(getNext(fast)); // Moves 2 steps
+        }
+
+        // If fast reached 1, it's a good number
+        return fast == 1;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            boolean result = isHappyNumber(n);
+            System.out.println(result ? "true" : "false");
+        }
+        scanner.close();
+    }
+}
