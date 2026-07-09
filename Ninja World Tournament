@@ -1,0 +1,40 @@
+import java.util.*;
+
+public class Solution {
+    public static int calculateScore(ArrayList<String> matchResult, int n) {
+        // Use Deque as a Stack for better performance than java.util.Stack
+        Deque<Integer> stack = new ArrayDeque<>();
+
+        for (String op : matchResult) {
+            switch (op) {
+                case "C" -> 
+                    // Remove the previous score
+                    stack.pop();
+                
+                case "D" -> 
+                    // Double the previous score and add it
+                    stack.push(stack.peek() * 2);
+                
+                case "+" -> {
+                    // Fetch the previous two scores, calculate the sum, and push it
+                    int top = stack.pop();
+                    int second = stack.peek();
+                    stack.push(top); // Put the first element back
+                    stack.push(top + second); // Push the new sum
+                }
+                
+                default -> 
+                    // It is a numeric string score, push it directly
+                    stack.push(Integer.parseInt(op));
+            }
+        }
+
+        // Calculate the sum of all elements present in the track record
+        int totalSum = 0;
+        for (int score : stack) {
+            totalSum += score;
+        }
+
+        return totalSum;
+    }
+}
