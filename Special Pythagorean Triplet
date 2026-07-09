@@ -1,0 +1,38 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] ObjectArgs) {
+        Scanner in = new Scanner(System.in);
+        int t = in.nextInt();
+        
+        for(int a0 = 0; a0 < t; a0++){
+            int n = in.nextInt();
+            long maxProduct = -1;
+            
+            // Loop for 'a'. Since a < b < c, 'a' cannot exceed n / 3
+            for (int a = 1; a <= n / 3; a++) {
+                // Derived formula: b = (n^2 - 2*n*a) / (2*n - 2*a)
+                int numerator = (n * n) - (2 * n * a);
+                int denominator = (2 * n) - (2 * a);
+                
+                // b must be a perfect integer, so numerator must be perfectly divisible by denominator
+                if (numerator % denominator == 0) {
+                    int b = numerator / denominator;
+                    int c = n - a - b;
+                    
+                    // Validate condition: a < b < c
+                    if (b > a && c > b) {
+                        long currentProduct = (long) a * b * c;
+                        if (currentProduct > maxProduct) {
+                            maxProduct = currentProduct;
+                        }
+                    }
+                }
+            }
+            System.out.println(maxProduct);
+        }
+        in.close();
+    }
+}
