@@ -1,0 +1,28 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef {
+    public static void main (String[] args) throws java.lang.Exception {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            int t = sc.nextInt();
+            while (t-- > 0) {
+                int n = sc.nextInt();
+                int m = sc.nextInt();
+                int x = sc.nextInt();
+
+                // Calculate the 1-based row index of seat X
+                int row = (x + m - 1) / m;
+
+                // Distance from front vs distance from back
+                int fromFront = row;
+                int fromBack = n - row + 1;
+
+                // Print the minimum rows to walk through
+                System.out.println(Math.min(fromFront, fromBack));
+            }
+        }
+        sc.close();
+    }
+}
