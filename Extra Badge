@@ -1,0 +1,18 @@
+public class Solution {
+
+    public static char findExtraBadge(String s, String t) {
+        char extra = 0;
+
+        // XOR all characters in string s
+        for (char c : s.toCharArray()) {
+            extra ^= c;
+        }
+
+        // XOR all characters in string t
+        for (char c : t.toCharArray()) {
+            extra ^= c;
+        }
+
+        return extra;
+    }
+}
