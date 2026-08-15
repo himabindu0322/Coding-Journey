@@ -1,0 +1,53 @@
+import java.util.Arrays;
+
+class Solution {
+    private int[][][] dp;
+
+    public int countWithout(int n, int d) {
+        if (n <= 0) return 0;
+
+        String s = String.valueOf(n);
+        int len = s.length();
+        
+        // dp[index][isLess][isStarted]
+        dp = new int[len][2][2];
+        for (int[][] row : dp) {
+            for (int[] col : row) {
+                Arrays.fill(col, -1);
+            }
+        }
+
+        return solve(s, d, 0, 0, 0);
+    }
+
+    private int solve(String s, int d, int index, int isLess, int isStarted) {
+        // Base case: formed a valid n-digit prefix
+        if (index == s.length()) {
+            return isStarted == 1 ? 1 : 0;
+        }
+
+        if (dp[index][isLess][isStarted] != -1) {
+            return dp[index][isLess][isStarted];
+        }
+
+        int limit = (isLess == 1) ? 9 : (s.charAt(index) - '0');
+        int count = 0;
+
+        for (int digit = 0; digit <= limit; digit++) {
+            // Skip target digit d if the number has already started or if digit d != 0
+            if (isStarted == 1 && digit == d) {
+                continue;
+            }
+            if (isStarted == 0 && digit == d && d != 0) {
+                continue;
+            }
+
+            int nextIsLess = (isLess == 1 || digit < limit) ? 1 : 0;
+            int nextIsStarted = (isStarted == 1 || digit > 0) ? 1 : 0;
+
+            count += solve(s, d, index + 1, nextIsLess, nextIsStarted);
+        }
+
+        return dp[index][isLess][isStarted] = count;
+    }
+}
