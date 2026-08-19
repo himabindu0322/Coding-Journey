@@ -1,0 +1,36 @@
+import java.util.Scanner;
+
+class Codechef {
+    public static void main (String[] args) throws java.lang.Exception {
+        Scanner sc = new Scanner(System.in);
+        
+        if (sc.hasNextInt()) {
+            int T = sc.nextInt();
+            
+            while (T-- > 0) {
+                int N = sc.nextInt();
+                int oddCount = 0;
+                int evenCount = 0;
+                
+                for (int i = 0; i < N; i++) {
+                    int val = sc.nextInt();
+                    if (val % 2 != 0) {
+                        oddCount++;
+                    } else {
+                        evenCount++;
+                    }
+                }
+                
+                int minCount = Math.min(oddCount, evenCount);
+                int maxCount = Math.max(oddCount, evenCount);
+                
+                // We can take all minCount elements and at most (minCount + 1) maxCount elements
+                int result = minCount + Math.min(maxCount, minCount + 1);
+                
+                System.out.println(result);
+            }
+        }
+        
+        sc.close();
+    }
+}
