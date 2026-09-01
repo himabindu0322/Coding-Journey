@@ -1,0 +1,34 @@
+class Solution {
+    private static final int MOD = 1_000_000_007;
+
+    public int palindromicStrings(int n, int k) {
+        long totalCount = 0;
+
+        for (int len = 1; len <= n; len++) {
+            int distinctNeeded;
+            
+            if (len % 2 == 0) {
+                // For even length 2m, we need m distinct characters
+                distinctNeeded = len / 2;
+            } else {
+                // For odd length 2m + 1, we need m + 1 distinct characters
+                distinctNeeded = (len / 2) + 1;
+            }
+
+            // If we need more distinct characters than available in alphabet k, count is 0
+            if (distinctNeeded > k) {
+                continue;
+            }
+
+            // Compute P(k, distinctNeeded) = k * (k - 1) * ... * (k - distinctNeeded + 1)
+            long permutations = 1;
+            for (int i = 0; i < distinctNeeded; i++) {
+                permutations = (permutations * (k - i)) % MOD;
+            }
+
+            totalCount = (totalCount + permutations) % MOD;
+        }
+
+        return (int) totalCount;
+    }
+}
