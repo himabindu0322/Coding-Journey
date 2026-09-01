@@ -1,0 +1,35 @@
+import java.util.*;
+
+class Solution {
+    public int solve(int n, String s) {
+        Set<Character> inCafe = new HashSet<>();     // Currently using a computer
+        Set<Character> turnedAway = new HashSet<>(); // Left without getting a computer
+        
+        int unassignedCount = 0;
+        int availableComputers = n;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (inCafe.contains(c)) {
+                // Customer is leaving after using a computer
+                inCafe.remove(c);
+                availableComputers++;
+            } else if (turnedAway.contains(c)) {
+                // Customer is leaving after being turned away earlier
+                turnedAway.remove(c);
+            } else {
+                // Customer is arriving for the first time
+                if (availableComputers > 0) {
+                    availableComputers--;
+                    inCafe.add(c);
+                } else {
+                    unassignedCount++;
+                    turnedAway.add(c);
+                }
+            }
+        }
+
+        return unassignedCount;
+    }
+}
