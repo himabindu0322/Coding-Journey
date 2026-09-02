@@ -1,0 +1,46 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner sc = new Scanner(System.in);
+		if (sc.hasNextInt()) {
+			int T = sc.nextInt();
+			while (T-- > 0) {
+				int N = sc.nextInt();
+				int K = sc.nextInt();
+				int[] A = new int[N];
+				long totalSum = 0;
+				for (int i = 0; i < N; i++) {
+					A[i] = sc.nextInt();
+					totalSum += A[i];
+				}
+
+				// Compute prefix sums of size K
+				long[] pref = new long[K + 1];
+				for (int i = 0; i < K; i++) {
+					pref[i + 1] = pref[i] + A[i];
+				}
+
+				// Compute suffix sums of size K
+				long[] suff = new long[K + 1];
+				for (int i = 0; i < K; i++) {
+					suff[i + 1] = suff[i] + A[N - 1 - i];
+				}
+
+				// Find minimum sum of K removed elements
+				long minRemoved = Long.MAX_VALUE;
+				for (int x = 0; x <= K; x++) {
+					long removed = pref[x] + suff[K - x];
+					minRemoved = Math.min(minRemoved, removed);
+				}
+
+				System.out.println(totalSum - minRemoved);
+			}
+		}
+		sc.close();
+	}
+}
