@@ -1,0 +1,76 @@
+import java.util.*;
+
+public class Solution {
+
+    static class TrieNode {
+        TrieNode[] children = new TrieNode[2]; // '0' and '1'
+        boolean isEnd = false;
+    }
+
+    private static int maxDist;
+
+    public static int maximumDistance(String[] arr) {
+        TrieNode root = new TrieNode();
+        maxDist = 0;
+
+        // 1. Build the Trie
+        for (String s : arr) {
+            insert(root, s);
+        }
+
+        // 2. Compute maximum distance using post-order DFS
+        getDepth(root);
+
+        return maxDist;
+    }
+
+    private static void insert(TrieNode root, String s) {
+        TrieNode curr = root;
+        for (int i = 0; i < s.length(); i++) {
+            int bit = s.charAt(i) - '0';
+            if (curr.children[bit] == null) {
+                curr.children[bit] = new TrieNode();
+            }
+            curr = curr.children[bit];
+        }
+        curr.isEnd = true;
+    }
+
+    // Returns the maximum depth (length of path remaining) of any string ending in this subtree
+    private static int getDepth(TrieNode node) {
+        if (node == null) {
+            return -1;
+        }
+
+        int leftDepth = getDepth(node.children[0]);
+        int rightDepth = getDepth(node.children[1]);
+
+        // If a string ends at this node, its path remaining relative to this node is 0
+        if (node.isEnd) {
+            leftDepth = Math.max(leftDepth, -1);
+            rightDepth = Math.max(rightDepth, -1);
+        }
+
+        // Check distance between best string in left subtree and best string in right subtree
+        if (leftDepth != -1 && rightDepth != -1) {
+            maxDist = Math.max(maxDist, (leftDepth + 1) + (rightDepth + 1));
+        }
+
+        // Check distance if one string ends at this exact node and another goes deeper
+        if (node.isEnd) {
+            if (leftDepth != -1) {
+                maxDist = Math.max(maxDist, leftDepth + 1);
+            }
+            if (rightDepth != -1) {
+                maxDist = Math.max(maxDist, rightDepth + 1);
+            }
+        }
+
+        int currentMax = -1;
+        if (node.isEnd) currentMax = 0;
+        if (leftDepth != -1) currentMax = Math.max(currentMax, leftDepth + 1);
+        if (rightDepth != -1) currentMax = Math.max(currentMax, rightDepth + 1);
+
+        return currentMax;
+    }
+}
