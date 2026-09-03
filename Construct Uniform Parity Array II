@@ -1,0 +1,26 @@
+import java.util.*;
+
+class Solution {
+    public boolean uniformArray(int[] nums1) {
+        int minVal = Integer.MAX_VALUE;
+        boolean hasOdd = false;
+        boolean hasEven = false;
+
+        for (int num : nums1) {
+            if (num % 2 != 0) {
+                hasOdd = true;
+            } else {
+                hasEven = true;
+            }
+            minVal = Math.min(minVal, num);
+        }
+
+        // If all elements are already odd OR all are already even
+        if (!hasOdd || !hasEven) {
+            return true;
+        }
+
+        // Mixed parity: can only form all-odd array if the global minimum is odd
+        return minVal % 2 != 0;
+    }
+}
